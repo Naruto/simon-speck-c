@@ -5,36 +5,33 @@
 #ifndef SIMON_SPECK_SPECK_H
 #define SIMON_SPECK_SPECK_H
 
-#include <cstdint>
+#include <stdint.h>
 
-using s64 = int_fast64_t;
-using u64 = uint_fast64_t;
-using u32 = uint_fast32_t;
-using u16 = uint_fast16_t;
-using u8  = uint_fast8_t;
+typedef struct speck_ctx_t_ speck_ctx_t;
 
 // number of round
-enum class spec {
-    ROUND_32_64,
-    ROUND_48_72,
-    ROUND_48_96,
-    ROUND_64_96,
-    ROUND_64_128,
-    ROUND_96_96,
-    ROUND_96_144,
-    ROUND_128_128,
-    ROUND_128_192,
-    ROUND_128_256,
+enum speck_encrypt_type {
+    SPECK_ENCRYPT_TYPE_32_64 = 0,
+    SPECK_ENCRYPT_TYPE_48_72,
+    SPECK_ENCRYPT_TYPE_48_96,
+    SPECK_ENCRYPT_TYPE_64_96,
+    SPECK_ENCRYPT_TYPE_64_128,
+    SPECK_ENCRYPT_TYPE_96_96,
+    SPECK_ENCRYPT_TYPE_96_144,
+    SPECK_ENCRYPT_TYPE_128_128,
+    SPECK_ENCRYPT_TYPE_128_192,
+    SPECK_ENCRYPT_TYPE_128_256,
 };
 
-//left circular shift
-#define LCS _lrotl
-//right circular shift
-#define RCS _lrotr
-
-
+#ifdef __cplusplus
 extern "C" {
-     bool Speck_init(enum spec idx);
+#endif //__cplusplus
 
-};
+speck_ctx_t *speck_init(enum speck_encrypt_type type);
+
+void speck_finish(speck_ctx_t *ctx);
+
+#ifdef __cplusplus
+}
+#endif //__cplusplus
 #endif //SIMON_SPECK_SPECK_H
