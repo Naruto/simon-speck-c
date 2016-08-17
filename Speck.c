@@ -2,10 +2,10 @@
 // Created by naruto on 16/08/11.
 //
 #include "Speck.h"
-#include <stdio.h>
 #include <stdlib.h>
 
 #define ROUNDS 32
+#define WORDS 16
 
 static inline void speck_round(uint64_t* x, uint64_t* y, uint64_t k)
 {
@@ -25,6 +25,24 @@ static inline void speck_back(uint64_t* x, uint64_t* y, uint64_t k)
   *x -= *y;
   *x = (*x << 8) | (*x >> (8 * sizeof(*x) - 8)); // x = ROTL(x, 8)
 
+}
+
+static inline void cast_uint8_array_to_uint64(uint64_t *dst, const unsigned char*array) {
+  // TODO: byte order
+  *dst =  (uint64_t)array[7] << 56 | (uint64_t)array[6] << 48 | (uint64_t)array[5] << 40 | (uint64_t)array[4] << 32 |
+                    array[3] << 24 |           array[2] << 16 |           array[1] << 8  |           array[0];
+}
+
+static inline void cast_uint64_to_uint8_array(unsigned char *dst, uint64_t src) {
+  // TODO: byte order
+  dst[0] = (src & 0x00000000000000ff);
+  dst[1] = (src & 0x000000000000ff00) >> 8;
+  dst[2] = (src & 0x0000000000ff0000) >> 16;
+  dst[3] = (src & 0x00000000ff000000) >> 24;
+  dst[4] = (src & 0x000000ff00000000) >> 32;
+  dst[5] = (src & 0x0000ff0000000000) >> 40;
+  dst[6] = (src & 0x00ff000000000000) >> 48;
+  dst[7] = (src & 0xff00000000000000) >> 56;
 }
 
 struct speck_ctx_t_ {
@@ -63,9 +81,65 @@ void speck_decrypt(speck_ctx_t *ctx, const uint64_t ciphertext[2], uint64_t decr
   decrypted[1] = ciphertext[1];
   for (unsigned i = ROUNDS; i > 0; i--) {
     speck_back(&decrypted[1], &decrypted[0], ctx->key_schedule[i - 1]);
-      
   }
 
+}
+
+void speck_encrypt_ex(speck_ctx_t *ctx, const unsigned char *plain, int plain_len,
+                      const unsigned char *crypted, int crypted_len) {
+    if(plain_len % WORDS != 0) {
+        return;
+    }
+    int len = plain_len / WORDS;
+
+    int i;
+    for(i=0; i<len; i++) {
+        uint64_t plain_block[2];
+        uint64_t crypted_block[2];
+
+        int array_idx = (i * WORDS);
+
+        unsigned char *cur_plain = (unsigned char *)plain + array_idx;
+        cast_uint8_array_to_uint64(&plain_block[0], cur_plain);
+        cast_uint8_array_to_uint64(&plain_block[1], cur_plain + 8);
+
+        speck_encrypt(ctx, plain_block, crypted_block);
+
+        unsigned char *cur_crypted = (unsigned char *)crypted + array_idx;
+        cast_uint64_to_uint8_array(cur_crypted, crypted_block[0]);
+        cast_uint64_to_uint8_array(cur_crypted + 8, crypted_block[1]);
+    }
+}
+
+void speck_decrypt_ex(speck_ctx_t *ctx, const unsigned char *crypted, int crypted_len,
+                      const unsigned char *decrypted, int decrypted_len) {
+    if(crypted_len % WORDS != 0) {
+        return;
+    }
+    int len = crypted_len / WORDS;
+
+    int i;
+    for(i=0; i<len; i++) {
+        uint64_t crypted_block[2];
+        uint64_t decrypted_block[2];
+
+        int array_idx = (i * WORDS);
+
+        unsigned char *cur_crypted = (unsigned char *)crypted + array_idx;
+        cast_uint8_array_to_uint64(&crypted_block[0], cur_crypted);
+        cast_uint8_array_to_uint64(&crypted_block[1], cur_crypted + 8);
+        printf("a 0x%llx\n", crypted_block[0]);
+        printf("b 0x%llx\n", crypted_block[1]);
+
+        speck_decrypt(ctx, crypted_block, decrypted_block);
+
+        printf("c 0x%llx\n", decrypted_block[0]);
+        printf("d 0x%llx\n", decrypted_block[1]);
+
+        unsigned char *cur_decrypted = (unsigned char *)decrypted + array_idx;
+        cast_uint64_to_uint8_array(cur_decrypted, decrypted_block[0]);
+        cast_uint64_to_uint8_array(cur_decrypted + 8, decrypted_block[1]);
+    }
 }
 
 void speck_finish(speck_ctx_t **ctx) {

@@ -33,6 +33,12 @@ void speck_encrypt(speck_ctx_t *ctx, const uint64_t plaintext[2],uint64_t cipher
 
 void speck_decrypt(speck_ctx_t *ctx, const uint64_t ciphertext[2], uint64_t decrypted[2]);
 
+void speck_encrypt_ex(speck_ctx_t *ctx, const unsigned char *plain, int plain_len,
+                      const unsigned char *crypted, int crypted_len);
+
+void speck_decrypt_ex(speck_ctx_t *ctx, const unsigned char *crypted, int crypted_len,
+                      const unsigned char *decrypted, int decrypted_len);
+
 void speck_finish(speck_ctx_t **ctx);
 
 #ifdef __cplusplus
