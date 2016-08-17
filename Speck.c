@@ -128,13 +128,8 @@ void speck_decrypt_ex(speck_ctx_t *ctx, const unsigned char *crypted, int crypte
         unsigned char *cur_crypted = (unsigned char *)crypted + array_idx;
         cast_uint8_array_to_uint64(&crypted_block[0], cur_crypted);
         cast_uint8_array_to_uint64(&crypted_block[1], cur_crypted + 8);
-        printf("a 0x%llx\n", crypted_block[0]);
-        printf("b 0x%llx\n", crypted_block[1]);
 
         speck_decrypt(ctx, crypted_block, decrypted_block);
-
-        printf("c 0x%llx\n", decrypted_block[0]);
-        printf("d 0x%llx\n", decrypted_block[1]);
 
         unsigned char *cur_decrypted = (unsigned char *)decrypted + array_idx;
         cast_uint64_to_uint8_array(cur_decrypted, decrypted_block[0]);
