@@ -29,5 +29,5 @@
 *.app
 
 build*/
-.idea*
+.idea*/
 libs

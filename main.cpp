@@ -1,5 +1,6 @@
 #include "Speck.h"
 #include <stdio.h>
+#include <string.h>
 
 int main() {
     uint64_t key[2];
@@ -60,6 +61,32 @@ int main() {
       speck_decrypt_ex(ctx, crypted_text, sizeof(crypted_text), tmp, sizeof(tmp));
       for(int i=15;i >=0;i--)
         printf("%02x", tmp[i]);
+      printf("\n");
+    }
+
+    {
+      int i;
+      unsigned char plain_text[128];
+      unsigned char crypted_text[128];
+      unsigned char tmp_text[128];
+
+      memset(plain_text, 0, 128);
+      memset(crypted_text, 0, 128);
+      memset(tmp_text, 0, 128);
+      strcpy((char*)plain_text, "日本語入力してみます");
+        strcpy((char*)plain_text, "abcdefghijklmnopqrstyvwxyz");
+      for(i=127;i>=0;i--)
+        printf("%02x ", plain_text[i]);
+      printf("\n");
+
+      speck_encrypt_ex(ctx, plain_text, 128, crypted_text, 128);
+      for(i=127;i>=0;i--)
+        printf("%02x ", crypted_text[i]);
+      printf("\n");
+
+      speck_decrypt_ex(ctx, crypted_text, 128, tmp_text, 128);
+      for(i=127;i>=0;i--)
+        printf("%02x ", tmp_text[i]);
       printf("\n");
     }
 
