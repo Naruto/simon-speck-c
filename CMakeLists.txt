@@ -6,6 +6,7 @@ option(DISABLE_SHARED "Do not build a shared version of the libraries?" OFF)
 
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_C_STANDARD 11)
 
 set(libspeck_SRCS Speck.c)
 set(libspeck_HEADER Speck.h)
