@@ -34,5 +34,5 @@ set_target_properties(libspeck_static PROPERTIES OUTPUT_NAME "speck")
 #install(TARGETS libspeck_static LIBRARY DESTINATION ${LIB_INSTALL_DIR} ARCHIVE DESTINATION ${LIB_INSTALL_DIR})
 endif (ENABLE_STATIC AND NOT DISABLE_SHARED)
 
-add_executable(simon_speck main.cpp)
-target_link_libraries(simon_speck PUBLIC speck)
+add_executable(speck_test speck_test.cpp)
+target_link_libraries(speck_test PUBLIC speck)
