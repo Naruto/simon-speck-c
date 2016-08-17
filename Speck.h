@@ -2,8 +2,8 @@
 // Created by naruto on 16/08/11.
 //
 
-#ifndef SIMON_SPECK_SPECK_H
-#define SIMON_SPECK_SPECK_H
+#ifndef SPECK_H
+#define SPECK_H
 
 #include <stdint.h>
 
@@ -27,11 +27,15 @@ enum speck_encrypt_type {
 extern "C" {
 #endif //__cplusplus
 
-speck_ctx_t *speck_init(enum speck_encrypt_type type);
+speck_ctx_t *speck_init(enum speck_encrypt_type type, const uint64_t key[2]);
 
-void speck_finish(speck_ctx_t *ctx);
+void speck_encrypt(speck_ctx_t *ctx, const uint64_t plaintext[2],uint64_t ciphertext[2]);
+
+void speck_decrypt(speck_ctx_t *ctx, const uint64_t ciphertext[2], uint64_t decrypted[2]);
+
+void speck_finish(speck_ctx_t **ctx);
 
 #ifdef __cplusplus
 }
 #endif //__cplusplus
-#endif //SIMON_SPECK_SPECK_H
+#endif //SPECK_H
