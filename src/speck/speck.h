@@ -7,6 +7,23 @@
 
 #include <stdint.h>
 
+#ifdef SPECKAPI
+#undef SPECKAPI
+#endif
+
+#if _WIN32
+#define SPECKAPI __declspec(dllexport)
+#else
+#  ifdef __GNUC__
+#    if __GNUC__ >= 4
+#      define __attribute__((visibility("default")))
+#    else
+#    endif
+#  else
+#    define SPECKAPI
+#  endif
+#endif
+
 typedef struct speck_ctx_t_ speck_ctx_t;
 
 // number of round
@@ -27,21 +44,24 @@ enum speck_encrypt_type {
 extern "C" {
 #endif //__cplusplus
 
-speck_ctx_t *speck_init(enum speck_encrypt_type type, const uint64_t key[2]);
+SPECKAPI speck_ctx_t *speck_init(enum speck_encrypt_type type, const uint64_t key[2]);
 
-speck_ctx_t *speck_init2(enum speck_encrypt_type type, const unsigned char *key);
+SPECKAPI speck_ctx_t *speck_init2(const unsigned char *key);
 
-void speck_encrypt(speck_ctx_t *ctx, const uint64_t plaintext[2],uint64_t ciphertext[2]);
+SPECKAPI void speck_encrypt(speck_ctx_t *ctx, const uint64_t plaintext[2],uint64_t ciphertext[2]);
 
-void speck_decrypt(speck_ctx_t *ctx, const uint64_t ciphertext[2], uint64_t decrypted[2]);
+SPECKAPI void speck_decrypt(speck_ctx_t *ctx, const uint64_t ciphertext[2], uint64_t decrypted[2]);
 
-int speck_encrypt_ex(speck_ctx_t *ctx, const unsigned char *plain, unsigned char *crypted, int plain_len);
+SPECKAPI int speck_encrypt_ex(speck_ctx_t *ctx, const unsigned char *plain, unsigned char *crypted, int plain_len);
 
-int speck_decrypt_ex(speck_ctx_t *ctx, const unsigned char *crypted, unsigned char *decrypted, int crypted_len);
+SPECKAPI int speck_decrypt_ex(speck_ctx_t *ctx, const unsigned char *crypted, unsigned char *decrypted, int crypted_len);
 
-void speck_finish(speck_ctx_t **ctx);
+SPECKAPI void speck_finish(speck_ctx_t **ctx);
 
 #ifdef __cplusplus
 }
 #endif //__cplusplus
+
+#undef SPECKAPI
+#define SPECKAPI
 #endif //SPECK_H

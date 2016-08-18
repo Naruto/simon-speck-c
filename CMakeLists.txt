@@ -89,6 +89,9 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_C_STANDARD 11)
 
 set(libspeck_SRCS src/speck/speck.c)
+if(WIN32)
+set(libspeck_SRCS ${libspeck_SRCS} src/speck/dllmain.c)
+endif(WIN32)
 set(libspeck_HEADER src/speck/speck.h)
 
 add_library(speck
@@ -114,5 +117,5 @@ set_target_properties(libspeck_static PROPERTIES OUTPUT_NAME "speck")
 #install(TARGETS libspeck_static LIBRARY DESTINATION ${LIB_INSTALL_DIR} ARCHIVE DESTINATION ${LIB_INSTALL_DIR})
 endif (ENABLE_STATIC AND NOT DISABLE_SHARED)
 
-add_executable(speck_test src/speck/speck_test.cpp)
-target_link_libraries(speck_test PUBLIC speck)
+#add_executable(speck_test src/speck/speck_test.cpp)
+#target_link_libraries(speck_test PUBLIC speck)
