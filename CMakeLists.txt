@@ -8,8 +8,8 @@ option(DISABLE_SHARED "Do not build a shared version of the libraries?" OFF)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_C_STANDARD 11)
 
-set(libspeck_SRCS Speck.c)
-set(libspeck_HEADER Speck.h)
+set(libspeck_SRCS speck.c)
+set(libspeck_HEADER speck.h)
 
 add_library(speck
         SHARED
