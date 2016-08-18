@@ -29,6 +29,8 @@ extern "C" {
 
 speck_ctx_t *speck_init(enum speck_encrypt_type type, const uint64_t key[2]);
 
+speck_ctx_t *speck_init2(enum speck_encrypt_type type, const unsigned char *key);
+
 void speck_encrypt(speck_ctx_t *ctx, const uint64_t plaintext[2],uint64_t ciphertext[2]);
 
 void speck_decrypt(speck_ctx_t *ctx, const uint64_t ciphertext[2], uint64_t decrypted[2]);
