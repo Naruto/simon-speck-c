@@ -1,6 +1,7 @@
 #include "Speck.h"
 #include <stdio.h>
 #include <string.h>
+#include <cstdlib>
 
 int main() {
     uint64_t key[2];
@@ -29,9 +30,10 @@ int main() {
     }
 
     {
-      unsigned char plain_text[16];
-      unsigned char crypted_text[16];
-      unsigned char tmp[16];
+        int siz = 16;
+      unsigned char *plain_text = (unsigned char*) calloc(1, siz);
+      unsigned char *crypted_text = (unsigned char*) calloc(1, siz);
+      unsigned char *tmp = (unsigned char*) calloc(1, siz);
 
       plain_text[0] = 0x20;
       plain_text[1] = 0x6D;
@@ -53,41 +55,46 @@ int main() {
       plain_text[14] = 0x61;
       plain_text[15] = 0x6C;
 
-      speck_encrypt_ex(ctx, plain_text, sizeof(plain_text), crypted_text, sizeof(crypted_text));
-      for(int i=15;i >=0;i--)
+      speck_encrypt_ex(ctx, plain_text, crypted_text, siz);
+      for(int i=siz-1;i >=0;i--)
         printf("%02x", crypted_text[i]);
       printf("\n");
 
-      speck_decrypt_ex(ctx, crypted_text, sizeof(crypted_text), tmp, sizeof(tmp));
-      for(int i=15;i >=0;i--)
+      speck_decrypt_ex(ctx, crypted_text, tmp, siz);
+      for(int i=siz-1;i >=0;i--)
         printf("%02x", tmp[i]);
       printf("\n");
+
+        free(tmp);
+        free(crypted_text);
+        free(plain_text);
     }
 
     {
+        int siz = 128;
       int i;
-      unsigned char plain_text[128];
-      unsigned char crypted_text[128];
-      unsigned char tmp_text[128];
+      unsigned char *plain_text = (unsigned char*)calloc(1, siz);
+      unsigned char *crypted_text = (unsigned char*)calloc(1, siz);
+      unsigned char *tmp_text = (unsigned char*)calloc(1, siz);
 
-      memset(plain_text, 0, 128);
-      memset(crypted_text, 0, 128);
-      memset(tmp_text, 0, 128);
-      strcpy((char*)plain_text, "日本語入力してみます");
-        strcpy((char*)plain_text, "abcdefghijklmnopqrstyvwxyz");
-      for(i=127;i>=0;i--)
+      strcpy((char*)plain_text, "abcdefghijklmnopqrstyvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
+      for(i=siz-1;i>=0;i--)
         printf("%02x ", plain_text[i]);
       printf("\n");
 
-      speck_encrypt_ex(ctx, plain_text, 128, crypted_text, 128);
-      for(i=127;i>=0;i--)
+      speck_encrypt_ex(ctx, plain_text, crypted_text, siz);
+      for(i=siz-1;i>=0;i--)
         printf("%02x ", crypted_text[i]);
       printf("\n");
 
-      speck_decrypt_ex(ctx, crypted_text, 128, tmp_text, 128);
-      for(i=127;i>=0;i--)
+      speck_decrypt_ex(ctx, crypted_text, tmp_text, siz);
+      for(i=siz-1;i>=0;i--)
         printf("%02x ", tmp_text[i]);
       printf("\n");
+
+        free(tmp_text);
+        free(crypted_text);
+        free(plain_text);
     }
 
     speck_finish(&ctx);

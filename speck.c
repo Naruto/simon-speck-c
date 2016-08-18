@@ -87,10 +87,9 @@ void speck_decrypt(speck_ctx_t *ctx, const uint64_t ciphertext[2], uint64_t decr
 
 }
 
-void speck_encrypt_ex(speck_ctx_t *ctx, const unsigned char *plain, int plain_len,
-                      const unsigned char *crypted, int crypted_len) {
+int speck_encrypt_ex(speck_ctx_t *ctx, const unsigned char *plain, unsigned char *crypted, int plain_len) {
   if(plain_len % BLOCK_SIZE != 0) {
-        return;
+        return -1;
     }
     int len = plain_len / BLOCK_SIZE;
 
@@ -113,12 +112,12 @@ void speck_encrypt_ex(speck_ctx_t *ctx, const unsigned char *plain, int plain_le
         cast_uint64_to_uint8_array(cur_crypted, crypted_block[0]);
         cast_uint64_to_uint8_array(cur_crypted + WORDS, crypted_block[1]);
     }
+    return 0;
 }
 
-void speck_decrypt_ex(speck_ctx_t *ctx, const unsigned char *crypted, int crypted_len,
-                      const unsigned char *decrypted, int decrypted_len) {
+int speck_decrypt_ex(speck_ctx_t *ctx, const unsigned char *crypted, unsigned char *decrypted, int crypted_len) {
     if(crypted_len % BLOCK_SIZE != 0) {
-        return;
+        return -1;
     }
     int len = crypted_len / BLOCK_SIZE;
 
@@ -139,6 +138,7 @@ void speck_decrypt_ex(speck_ctx_t *ctx, const unsigned char *crypted, int crypte
         cast_uint64_to_uint8_array(cur_decrypted, decrypted_block[0]);
         cast_uint64_to_uint8_array(cur_decrypted + WORDS, decrypted_block[1]);
     }
+    return 0;
 }
 
 void speck_finish(speck_ctx_t **ctx) {
