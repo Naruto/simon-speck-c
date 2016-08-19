@@ -16,7 +16,7 @@
 #else
 #  ifdef __GNUC__
 #    if __GNUC__ >= 4
-#      define __attribute__((visibility("default")))
+#      define SPECKAPI  __attribute__((visibility ("default")))
 #    else
 #    endif
 #  else
