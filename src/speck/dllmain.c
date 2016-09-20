@@ -1,9 +1,9 @@
 #include <windows.h>
 
 BOOL WINAPI DllMain(
-  HINSTANCE hinstDLL,  // DLL モジュールのハンドル
-  DWORD fdwReason,     // 関数を呼び出す理由
-  LPVOID lpvReserved   // 予約済み
+  HINSTANCE hinstDLL,  // DLL module handler
+  DWORD fdwReason,     // reason of call function
+  LPVOID lpvReserved   // reserve argument
 ) {
     return TRUE;
 }
