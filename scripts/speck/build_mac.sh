@@ -1,4 +1,4 @@
-#!/bin/sh -xe
+#!/bin/bash -xe
 
 SCRIPTDIR=`dirname $0`
 SCRIPTDIR=`cd $SCRIPTDIR && pwd -P`
@@ -15,10 +15,10 @@ make -j8
 popd > /dev/null
 
 # create bundle file
-/bin/rm -rf Assets/Unagi/Plugins/Mac/bisque_ws.bundle
-/bin/mkdir -p Assets/Unagi/Plugins/Mac/bisque_ws.bundle
-/bin/mkdir -p Assets/Unagi/Plugins/Mac/bisque_ws.bundle/Contents/MacOS
-/bin/cp ${MODULEDIR}/bisque/build/bisque/libbisque_ws.dylib Assets/Unagi/Plugins/Mac/bisque_ws.bundle/Contents/MacOS/bisque_ws
+/bin/rm -rf libs/macos
+/bin/mkdir -p libs/macos
+/bin/mkdir -p libs/macos/speck.bundle
+/bin/mkdir -p libs/macos/speck.bundle/Contents/MacOS
+/bin/cp ./build/libspeck.dylib libs/macos/speck.bundle/Contents/MacOS/speck
 
-/bin/rm -rf
 popd > /dev/null
