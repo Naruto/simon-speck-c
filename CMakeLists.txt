@@ -2,7 +2,7 @@
 # Root CMake file for simon and speck
 # ----------------------------------------------------------------------------
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.7)
 
 project(simon_speck CXX C)
 
