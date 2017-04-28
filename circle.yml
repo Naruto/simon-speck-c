@@ -1,0 +1,9 @@
+dependencies:
+  pre:
+    - /bin/rm -rf build; /bin/mkdir build; cd build; cmake ..; make
+  override:
+    - cd make; make; make test
+checkout:
+  post:
+    - git submodule init
+    - git submodule update
