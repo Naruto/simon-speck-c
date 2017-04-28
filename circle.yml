@@ -13,9 +13,9 @@ dependencies:
       else
         echo "Cached CMake found"
       fi
-    - /bin/rm -rf build; /bin/mkdir build; cd build; cmake ..; make V=1
+    - /bin/rm -rf build; /bin/mkdir build; cd build; cmake ..
   override:
-    - cd make; make V=1
+    - cd build; make clean ; make V=1
 checkout:
   post:
     - git submodule init
