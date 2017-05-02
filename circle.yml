@@ -1,6 +1,8 @@
 machine:
+  java:
   environment:
     PATH: "~/cmake-3.8.0-Linux-x86_64/bin:$PATH"
+    NDK_ROOT: "/usr/local/android-ndk"
 
 dependencies:
   cache_directories:
@@ -15,6 +17,7 @@ dependencies:
       fi
   override:
     - ./scripts/speck/build_linux.sh
+    - ./scripts/speck/build_android.sh
 checkout:
   post:
     - git submodule init
