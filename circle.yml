@@ -13,9 +13,8 @@ dependencies:
       else
         echo "Cached CMake found"
       fi
-    - /bin/rm -rf build; /bin/mkdir build; cd build; cmake ..
   override:
-    - cd build; make clean ; make V=1
+    - ./scripts/speck/build_linux.sh
 checkout:
   post:
     - git submodule init
