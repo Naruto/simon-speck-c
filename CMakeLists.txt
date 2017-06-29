@@ -85,6 +85,9 @@ endif()
 #  test_big_endian(WORDS_BIGENDIAN)
 #endif()
 
+if (EMSCRIPTEN)
+    set(CMAKE_STATIC_LIBRARY_SUFFIX ".bc")
+endif()
 
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(CMAKE_CXX_STANDARD 11)
