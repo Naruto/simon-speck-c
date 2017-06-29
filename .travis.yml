@@ -33,4 +33,5 @@ install:
     fi
   - cmake --version
   - popd
-script: ./scripts/speck/build_linux.sh
+script: if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then ./scripts/speck/build_linux.sh ; fi
+
