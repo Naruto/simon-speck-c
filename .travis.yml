@@ -16,7 +16,7 @@ addons:
     notification_email: tnaruto@gmail.com
     build_command_prepend: "rm -rf build && mkdir -p build && cd build && cmake .."
     build_command: "make -j4"
-    branch_pattern: travisci
+    branch_pattern: develop
 
 install: 
   - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
