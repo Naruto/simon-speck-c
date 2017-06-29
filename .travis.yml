@@ -14,7 +14,7 @@ addons:
       name: "Naruto/simon_speck"
       description: "<Your project description here>"
     notification_email: tnaruto@gmail.com
-    build_command_prepend: "mkdir -p build && cd build && cmake .."
+    build_command_prepend: "rm -rf build && mkdir -p build && cd build && cmake .."
     build_command: "make -j4"
     branch_pattern: travisci
 
