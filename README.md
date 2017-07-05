@@ -34,5 +34,7 @@ install cmake
 
 ## windows
 
-...
+```
+scripts\speck\build_win.bat
+```
 
