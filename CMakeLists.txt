@@ -15,6 +15,7 @@ project(simon_speck CXX C)
 # ===================================================
 option(ENABLE_STATIC "Build a static version of the libraries?" OFF)
 option(DISABLE_SHARED "Do not build a shared version of the libraries?" OFF)
+option(ENABLE_TESTING "Enable ctest?" OFF)
 
 
 # simon speck build options
@@ -119,6 +120,8 @@ endif (ENABLE_STATIC AND NOT DISABLE_SHARED)
 
 add_executable(speck_test src/speck/speck_test.cpp)
 target_link_libraries(speck_test PUBLIC speck)
-enable_testing()
-add_subdirectory("test")
-#add_test(unit_test "./speck_test")
+
+if(ENABLE_TESTING)
+  enable_testing()
+  add_subdirectory("test")
+endif()
