@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
+#include <inttypes.h>
 #include "speck.h"
 
 // https://eprint.iacr.org/2013/404.pdf
@@ -53,7 +55,7 @@ int main() {
         speck_encrypt(ctx, plain_text, cipher_text);
         if(!(cipher_text[0] == expect_cipher_text[0]  &&
              cipher_text[1] == expect_cipher_text[1])) {
-            printf("not match encrypt expect:0x%llx 0x%llx encrypted:0x%llx 0x%llx\n", expect_cipher_text[1], expect_cipher_text[0], cipher_text[1], cipher_text[0]);
+            printf("not match encrypt expect:0x%"PRIu64" 0x%"PRIu64" encrypted:0x%"PRIu64" 0x%"PRIu64"\n", expect_cipher_text[1], expect_cipher_text[0], cipher_text[1], cipher_text[0]);
             return 1;
         }
 
@@ -70,7 +72,7 @@ int main() {
         speck_decrypt(ctx, expect_cipher_text, decrypt_text);
         if(!(decrypt_text[0] == expect_decrypt_text[0]  &&
              decrypt_text[1] == expect_decrypt_text[1])) {
-            printf("not match decrypt expect:0x%llx 0x%llx decrypted:0x%llx 0x%llx\n", expect_decrypt_text[1], expect_decrypt_text[0], decrypt_text[1], decrypt_text[0]);
+            printf("not match decrypt expect:0x%"PRIu64" 0x%"PRIu64" decrypted:0x%"PRIu64" 0x%"PRIu64"\n", expect_decrypt_text[1], expect_decrypt_text[0], decrypt_text[1], decrypt_text[0]);
             return 1;
         }
 
