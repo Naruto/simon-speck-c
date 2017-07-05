@@ -1,7 +1,7 @@
-#include "speck.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "speck.h"
 
 // https://eprint.iacr.org/2013/404.pdf
 //
@@ -27,17 +27,17 @@ int main() {
     expect_decrypt_text[1] = plain_text[1];
 
     uint8_t plain_text_array[16] = {
-        0x00, 0x01, 0x02, 0x03,
-        0x04, 0x05, 0x06, 0x07,
-        0x08, 0x09, 0x0a, 0x0b,
-        0x0c, 0x0d, 0x0e, 0x0f,
+        0x20, 0x6d, 0x61, 0x64,
+        0x65, 0x20, 0x69, 0x74,
+        0x20, 0x65, 0x71, 0x75,
+        0x69, 0x76, 0x61, 0x6c,
     };
 
     uint8_t expect_cipher_array[16] = {
         0x18, 0x0d, 0x57, 0x5c,
         0xdf, 0xfe, 0x60, 0x78,
         0x65, 0x32, 0x78, 0x79,
-        0x51, 0x98, 0x5d, 0xa8,
+        0x51, 0x98, 0x5d, 0xa6,
     };
 
     uint8_t expect_decrypt_array[16];
@@ -51,10 +51,9 @@ int main() {
         uint64_t cipher_text[2];
 
         speck_encrypt(ctx, plain_text, cipher_text);
-        // printf("0x%llx\n", cipher_text[0]);
-        // printf("0x%llx\n", cipher_text[1]);
         if(!(cipher_text[0] == expect_cipher_text[0]  &&
              cipher_text[1] == expect_cipher_text[1])) {
+            printf("not match encrypt expect:0x%llx 0x%llx encrypted:0x%llx 0x%llx\n", expect_cipher_text[1], expect_cipher_text[0], cipher_text[1], cipher_text[0]);
             return 1;
         }
 
@@ -69,10 +68,9 @@ int main() {
         uint64_t decrypt_text[2];
 
         speck_decrypt(ctx, expect_cipher_text, decrypt_text);
-        // printf("0x%llx\n", decrypt_text[0]);
-        // printf("0x%llx\n", decrypt_text[1]);
         if(!(decrypt_text[0] == expect_decrypt_text[0]  &&
              decrypt_text[1] == expect_decrypt_text[1])) {
+            printf("not match decrypt expect:0x%llx 0x%llx decrypted:0x%llx 0x%llx\n", expect_decrypt_text[1], expect_decrypt_text[0], decrypt_text[1], decrypt_text[0]);
             return 1;
         }
 
@@ -88,54 +86,35 @@ int main() {
         uint8_t crypted_text[16];
 
         r = speck_encrypt_ex(ctx, plain_text_array, crypted_text, 16);
-        if(r <0) {return 1;)}
+        if(r <0) {return 1; }
         for(int i=0; i<16; i++) {
-            printf("%0x02x == 0x02x\n", crypted_text[i], expect_cipher_array[i]);
-            if(crypted_text[i] != expect_cipher_array[i])
+            if(crypted_text[i] != expect_cipher_array[i]) {
+                printf("not match encrypted idx:%d  0x%02x != 0x%02x\n", i, crypted_text[i], expect_cipher_array[i]);
                 return 1;
+            }
         }
-        // printf("\n");
 
         speck_finish(&ctx);
     }
 
-
-    /*
-    speck_decrypt_ex(ctx, crypted_text, tmp, siz);
-    for(int i=siz-1;i >=0;i--)
-        printf("%02x", tmp[i]);
-    printf("\n");
-    */
-
-
-/*
+    // stream decrypt
     {
-        int siz = 128;
-        int i;
-        unsigned char *plain_text = (unsigned char*)calloc(1, siz);
-        unsigned char *crypted_text = (unsigned char*)calloc(1, siz);
-        unsigned char *tmp_text = (unsigned char*)calloc(1, siz);
+        int r;
+        speck_ctx_t *ctx = speck_init(SPECK_ENCRYPT_TYPE_128_128, key);
+        if(!ctx) return 1;
+        uint8_t decrypted_array[16];
 
-        strcpy((char*)plain_text, "abcdefghijklmnopqrstyvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
-        for(i=siz-1;i>=0;i--)
-            printf("%02x ", plain_text[i]);
-        printf("\n");
+        r = speck_decrypt_ex(ctx, expect_cipher_array, decrypted_array, 16);
+        if(r <0) {return 1; }
+        for(int i=0; i<16; i++) {
+            if(decrypted_array[i] != expect_decrypt_array[i]) {
+                printf("not match decrypted idx:%d  0x%02x != 0x%02x\n", i, decrypted_array[i], expect_cipher_array[i]);
+                return 1;
+            }
+        }
 
-        speck_encrypt_ex(ctx, plain_text, crypted_text, siz);
-        for(i=siz-1;i>=0;i--)
-            printf("%02x ", crypted_text[i]);
-        printf("\n");
-
-        speck_decrypt_ex(ctx, crypted_text, tmp_text, siz);
-        for(i=siz-1;i>=0;i--)
-            printf("%02x ", tmp_text[i]);
-        printf("\n");
-
-        free(tmp_text);
-        free(crypted_text);
-        free(plain_text);
+        speck_finish(&ctx);
     }
-*/
 
     return 0;
 }
