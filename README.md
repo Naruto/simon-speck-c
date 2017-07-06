@@ -46,8 +46,8 @@ rm -rf build
 mkdir build
 cd build
 cmake -DENABLE_TESTING=ON -DCMAKE_BUILD_TYPE=Debug ..
-make
-make test
+cmake --build . --clean-first
+ctest
 ```
 
 ## release build
