@@ -1,5 +1,5 @@
 # simon_speck
-simon and speck is lightweight block cipher algorithm, published by NSA.( https://eprint.iacr.org/2013/404.pdf )
+simon and speck is lightweight block cipher algorithm, published by NSA.([iadgov/simon-speck](https://github.com/iadgov/simon-speck))
 
 this is one reference implementation example by C language.
 
