@@ -100,6 +100,11 @@ add_library(speck
         ${libspeck_SRCS}
         )
 
+if (ENABLE_NEON)
+    set(WITH_NEON 1)
+    target_compile_definitions(speck PRIVATE "-DWITH_NEON")
+endif()
+
 
 if (DISABLE_SHARED)
 add_library(libspeck STAIC ${libspeck_SRCS})
