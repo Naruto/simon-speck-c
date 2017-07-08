@@ -98,6 +98,10 @@ endif()
 
 
 if(WITH_NEON)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfloat-abi=softfp -mfpu=neon")
+endif()
+
+if(WITH_NEON)
   set(libspeck_SRCS src/speck/speck_neon.c)
 else()
   set(libspeck_SRCS src/speck/speck.c)

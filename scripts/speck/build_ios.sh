@@ -5,7 +5,6 @@ SCRIPTDIR=`cd $SCRIPTDIR && pwd -P`
 BASEDIR=${SCRIPTDIR}/../..
 BASEDIR=`cd ${BASEDIR} && pwd -P`
 
-JOB_NUM=4
 LIBNAME="libspeck.a"
 
 pushd ${BASEDIR} > /dev/null
@@ -22,23 +21,23 @@ pushd ${BASEDIR} > /dev/null
     /bin/mkdir build_iphone_fat
 
     cd build_iphone
-    cmake .. -DENABLE_STATIC=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../cmake/ios.toolchain.cmake -DIOS_PLATFORM=OS -DCMAKE_OSX_SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/
-    make -j${JOB_NUM}
+    cmake .. -DENABLE_STATIC=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../cmake/ios.toolchain.cmake -DIOS_PLATFORM=OS -DCMAKE_OSX_SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/ -DENABLE_NEON=ON
+    cmake --build . 
     cd ..
 
     cd build_iphone64
-    cmake .. -DENABLE_STATIC=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../cmake/ios.toolchain.cmake -DIOS_PLATFORM=OS64 -DCMAKE_OSX_SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/
-    make -j${JOB_NUM}
+    cmake .. -DENABLE_STATIC=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../cmake/ios.toolchain.cmake -DIOS_PLATFORM=OS64 -DCMAKE_OSX_SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/ -DENABLE_NEON=ON
+    cmake --build .
     cd ..
 
     #cd build_iphone_sim
     #cmake .. -DENABLE_STATIC=ON -DCMAKE_TOOLCHAIN_FILE=../cmake/ios.toolchain.cmake -DIOS_PLATFORM=SIMULATOR -DCMAKE_OSX_SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/
-    #make -j${JOB_NUM}
+    #cmake --build .
     #cd ..
 
     cd build_iphone_sim64
     cmake .. -DENABLE_STATIC=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../cmake/ios.toolchain.cmake -DIOS_PLATFORM=SIMULATOR64 -DCMAKE_OSX_SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/
-    make -j${JOB_NUM}
+    cmake --build .
     cd ..
 
     cd build_iphone_fat
