@@ -89,20 +89,29 @@ endif()
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_C_STANDARD 11)
 
+
+if (ENABLE_NEON)
+  set(WITH_NEON 1)
+endif()
+
+
+if(WITH_NEON)
+set(libspeck_SRCS src/speck/speck_neon.c)
+else()
 set(libspeck_SRCS src/speck/speck.c)
+endif()
 if(WIN32)
 set(libspeck_SRCS ${libspeck_SRCS} src/speck/dllmain.c)
 endif(WIN32)
-set(libspeck_HEADER src/speck/speck.h)
+set(libspeck_HEADER src/speck/speck.h src/speck/speck_private.h)
 
 add_library(speck
         SHARED
         ${libspeck_SRCS}
         )
 
-if (ENABLE_NEON)
-    set(WITH_NEON 1)
-    target_compile_definitions(speck PRIVATE "-DWITH_NEON")
+if (WITH_NEON)
+  target_compile_definitions(speck PRIVATE "-DWITH_NEON")
 endif()
 
 
