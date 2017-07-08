@@ -96,9 +96,11 @@ if(ENABLE_NEON)
   endif()
 endif()
 
-
 if(WITH_NEON)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfloat-abi=softfp -mfpu=neon")
+  if(IOS)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
+  endif()
 endif()
 
 if(WITH_NEON)
