@@ -7,44 +7,50 @@ BASEDIR=`cd ${BASEDIR} && pwd -P`
 
 LIBNAME="libspeck.a"
 
-pushd ${BASEDIR} > /dev/null
+buildios() {
+    BUILD_DIR=$1
+    IOS_PLATFORM=$2
+    OSX_SYSROOT=$3
+    ADD_FLAG=$4
     # build
-    /bin/rm -rf build_iphone
-    /bin/rm -rf build_iphone64
-    /bin/rm -rf build_iphone_sim
-    /bin/rm -rf build_iphone_sim64
-    /bin/rm -rf build_iphone_fat
-    /bin/mkdir build_iphone
-    /bin/mkdir build_iphone64
-    /bin/mkdir build_iphone_sim
-    /bin/mkdir build_iphone_sim64
-    /bin/mkdir build_iphone_fat
+    /bin/rm -rf ${BUILD_DIR}
+    /bin/mkdir -p ${BUILD_DIR}
 
-    cd build_iphone
-    cmake .. -DENABLE_STATIC=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../cmake/ios.toolchain.cmake -DIOS_PLATFORM=OS -DCMAKE_OSX_SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/ -DENABLE_NEON=ON
+    pushd ${BUILD_DIR} > /dev/null
+
+    cmake -DENABLE_STATIC=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=${BASEDIR}/cmake/ios.toolchain.cmake -DIOS_PLATFORM=${IOS_PLATFORM} -DCMAKE_OSX_SYSROOT=${OSX_SYSROOT} ${ADD_FLAG} ${BASEDIR}
     cmake --build . 
-    cd ..
 
-    cd build_iphone64
-    cmake .. -DENABLE_STATIC=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../cmake/ios.toolchain.cmake -DIOS_PLATFORM=OS64 -DCMAKE_OSX_SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/ -DENABLE_NEON=ON
-    cmake --build .
-    cd ..
+    popd > /dev/null 
+}
 
-    #cd build_iphone_sim
-    #cmake .. -DENABLE_STATIC=ON -DCMAKE_TOOLCHAIN_FILE=../cmake/ios.toolchain.cmake -DIOS_PLATFORM=SIMULATOR -DCMAKE_OSX_SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/
-    #cmake --build .
-    #cd ..
+pushd ${BASEDIR} > /dev/null
 
-    cd build_iphone_sim64
-    cmake .. -DENABLE_STATIC=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../cmake/ios.toolchain.cmake -DIOS_PLATFORM=SIMULATOR64 -DCMAKE_OSX_SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/
-    cmake --build .
-    cd ..
+    /bin/rm -rf build
+    /bin/mkdir -p build
 
-    cd build_iphone_fat
-    libtool -static ../build_iphone64/${LIBNAME} ../build_iphone/${LIBNAME} ../build_iphone_sim64/${LIBNAME} -o ./${LIBNAME}
-    cd ..
+    # iPhone armv7
+    buildios build/build_iphone OS /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/ "-DENABLE_NEON=ON"
+
+    # iPhone armv7s
+    buildios build/build_iphones OSs /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/ "-DENABLE_NEON=ON"
+
+    # iPhone arm64
+    buildios build/build_iphone64 OS64 /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/ "-DENABLE_NEON=ON"
+
+    ## iPhone simulator
+    buildios build/build_sim SIMULATOR /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/ "-DENABLE_BITCODE=OFF"
+
+    # iPhone simulator64
+    buildios build/build_sim64 SIMULATOR64 /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/ "-DENABLE_BITCODE=OFF"
+
+    /bin/rm -rf build/build_iphone_fat
+    /bin/mkdir build/build_iphone_fat
+    pushd build/build_iphone_fat > /dev/null
+    libtool -static ../build_iphone64/${LIBNAME} ../build_iphone/${LIBNAME} ../build_iphones/${LIBNAME} ../build_sim/${LIBNAME} ../build_sim64/${LIBNAME} -o ./${LIBNAME}
+    popd > /dev/null
 
     # deploy
     /bin/mkdir -p libs/ios
-    /bin/cp build_iphone_fat/${LIBNAME} libs/ios
+    /bin/cp build/build_iphone_fat/${LIBNAME} libs/ios
 popd > /dev/null
