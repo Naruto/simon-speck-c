@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/Naruto/simon_speck.svg?branch=develop)](https://travis-ci.org/Naruto/simon_speck?branch=develop)
+[![Build Status](https://travis-ci.org/Naruto/simon-speck-c.svg?branch=develop)](https://travis-ci.org/Naruto/simon-speck-c?branch=develop)
 [![Windows build status](https://ci.appveyor.com/api/projects/status/niji0dd7q1euolvk?svg=true)](https://ci.appveyor.com/project/Naruto/simon-speck)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/10443/badge.svg)](https://scan.coverity.com/projects/10443)
 
