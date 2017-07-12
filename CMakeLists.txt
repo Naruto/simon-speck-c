@@ -91,7 +91,9 @@ set(CMAKE_C_STANDARD 11)
 
 # ARM NEON
 if(ENABLE_NEON)
-  if(ARM OR AARCH64 OR IOS OR (CMAKE_C_COMPILER MATCHES ".*arm-linux-gnueabi-gcc$"))
+  if(((IOS_ARCH MATCHES "armv7") OR (IOS_ARCH MATCHES "arm64")) OR
+    ((CMAKE_ANDROID_ARCH_ABI MATCHES armeabi-v7a)) OR
+    (CMAKE_C_COMPILER MATCHES ".*arm-linux-gnueabi-gcc$"))
     set(WITH_NEON ON)
   endif()
 endif()

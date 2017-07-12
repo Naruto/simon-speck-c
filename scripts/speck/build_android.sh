@@ -18,7 +18,7 @@ android_ndk_build() {
     /bin/rm -rf build
     /bin/mkdir build
     pushd build > /dev/null
-    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=${SYSTEM_VERSION} -DCMAKE_ANDROID_ARCH_ABI=${ARCH} -DCMAKE_ANDROID_NDK=${NDK_ROOT} $OTHER_FLAG ..
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_SYSTEM_NAME=Android -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=clang -DCMAKE_SYSTEM_VERSION=${SYSTEM_VERSION} -DCMAKE_ANDROID_ARCH_ABI=${ARCH} -DCMAKE_ANDROID_NDK=${NDK_ROOT} $OTHER_FLAG ..
     cmake --build .
     popd > /dev/null
 
