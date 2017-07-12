@@ -3,7 +3,7 @@
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/10443/badge.svg)](https://scan.coverity.com/projects/10443)
 
 # simon-speck-c
-simon and speck is lightweight block cipher algorithm, published by NSA.([iadgov/simon-speck](https://github.com/iadgov/simon-speck))
+simon and speck are lightweight block cipher algorithms, published by NSA.([iadgov/simon-speck](https://github.com/iadgov/simon-speck))
 
 this is one reference implementation example by C language.
 
@@ -11,14 +11,27 @@ support platforms are linux, iOS, Android ndk, macOS and Windows.
 
 # Supports
 
-- algorithms and block sizes
-    - speck 128/128
-- platforms
+- algorithms and block sizes, key sizes
+    - speck
+        - 128/128
+- platforms, architectures
     - linux
+        - x86_64
+        - arm
     - iOS
+        - armv7
+        - armv7s
+        - arm64
+        - x86 (simulator)
+        - x86_64 (simulator)
     - android
+        - armeabi-v7a
+        - x86
     - macOS
+        - x86_64
     - windows
+        - x86
+        - x86_64
 
 # Requirements
 ## common
