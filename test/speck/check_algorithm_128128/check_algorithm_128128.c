@@ -91,7 +91,7 @@ int main() {
         if(r <0) {return 1; }
         for(int i=0; i<16; i++) {
             if(crypted_text[i] != expect_cipher_array[i]) {
-                printf("not match encrypted idx:%d  0x%02x != 0x%02x\n", i, crypted_text[i], expect_cipher_array[i]);
+                printf("not match stream encrypted idx:%d  0x%02x != 0x%02x\n", i, crypted_text[i], expect_cipher_array[i]);
                 return 1;
             }
         }
@@ -110,12 +110,124 @@ int main() {
         if(r <0) {return 1; }
         for(int i=0; i<16; i++) {
             if(decrypted_array[i] != expect_decrypt_array[i]) {
-                printf("not match decrypted idx:%d  0x%02x != 0x%02x\n", i, decrypted_array[i], expect_cipher_array[i]);
+                printf("not match stream decrypted idx:%d  0x%02x != 0x%02x\n", i, decrypted_array[i], expect_cipher_array[i]);
                 return 1;
             }
         }
 
         speck_finish(&ctx);
+    }
+
+    // stream encrypt of even size
+    {
+      int r;
+      speck_ctx_t *ctx = speck_init(SPECK_ENCRYPT_TYPE_128_128, key);
+      if(!ctx) return 1;
+      uint8_t plain_text_array2[16 * 2];
+      uint8_t crypted_text_array2[16 * 2];
+      uint8_t expect_cipher_array2[16 * 2];
+
+      memcpy(plain_text_array2, plain_text_array, 16);
+      memcpy(plain_text_array2 + 16, plain_text_array, 16);
+
+      memcpy(expect_cipher_array2, expect_cipher_array, 16);
+      memcpy(expect_cipher_array2 + 16, expect_cipher_array, 16);
+
+      r = speck_encrypt_ex(ctx, plain_text_array2, crypted_text_array2, 16*2);
+      if(r <0) {return 1; }
+      for(int i=0; i<16*2; i++) {
+        if(crypted_text_array2[i] != expect_cipher_array2[i]) {
+          printf("not match even size encrypted idx:%d  0x%02x != 0x%02x\n", i, crypted_text_array2[i], expect_cipher_array2[i]);
+          return 1;
+        }
+      }
+
+      speck_finish(&ctx);
+    }
+
+    // stream decrypt of even size
+    {
+      int r;
+      speck_ctx_t *ctx = speck_init(SPECK_ENCRYPT_TYPE_128_128, key);
+      if(!ctx) return 1;
+      uint8_t expect_cipher_array2[16 * 2];
+      uint8_t decrypted_array2[16 * 2];
+      uint8_t expect_decrypt_array2[16 * 2];
+
+      memcpy(expect_cipher_array2, expect_cipher_array, 16);
+      memcpy(expect_cipher_array2 + 16, expect_cipher_array, 16);
+
+      memcpy(expect_decrypt_array2, expect_decrypt_array, 16);
+      memcpy(expect_decrypt_array2 + 16, expect_decrypt_array, 16);
+
+      r = speck_decrypt_ex(ctx, expect_cipher_array2, decrypted_array2, 16*2);
+      if(r <0) {return 1; }
+      for(int i=0; i<16*2; i++) {
+        if(decrypted_array2[i] != expect_decrypt_array2[i]) {
+          printf("not match even size decrypted idx:%d  0x%02x != 0x%02x\n", i, decrypted_array2[i], expect_decrypt_array2[i]);
+          return 1;
+        }
+      }
+
+      speck_finish(&ctx);
+    }
+
+    // stream encrypt of odd size
+    {
+      int r;
+      speck_ctx_t *ctx = speck_init(SPECK_ENCRYPT_TYPE_128_128, key);
+      if(!ctx) return 1;
+      uint8_t plain_text_array3[16 * 3];
+      uint8_t crypted_text_array3[16 * 3];
+      uint8_t expect_cipher_array3[16 * 3];
+
+      memcpy(plain_text_array3 + (16 * 0), plain_text_array, 16);
+      memcpy(plain_text_array3 + (16 * 1), plain_text_array, 16);
+      memcpy(plain_text_array3 + (16 * 2), plain_text_array, 16);
+
+      memcpy(expect_cipher_array3 + (16 * 0), expect_cipher_array, 16);
+      memcpy(expect_cipher_array3 + (16 * 1), expect_cipher_array, 16);
+      memcpy(expect_cipher_array3 + (16 * 2), expect_cipher_array, 16);
+
+      r = speck_encrypt_ex(ctx, plain_text_array3, crypted_text_array3, 16*3);
+      if(r <0) {return 1; }
+      for(int i=0; i<16*3; i++) {
+        if(crypted_text_array3[i] != expect_cipher_array3[i]) {
+          printf("not match odd size encrypted idx:%d  0x%02x != 0x%02x\n", i, crypted_text_array3[i], expect_cipher_array3[i]);
+          return 1;
+        }
+      }
+
+      speck_finish(&ctx);
+    }
+
+    // stream decrypt of odd size
+    {
+      int r;
+      speck_ctx_t *ctx = speck_init(SPECK_ENCRYPT_TYPE_128_128, key);
+      if(!ctx) return 1;
+      uint8_t expect_cipher_array3[16 * 3];
+      uint8_t decrypted_array3[16 * 3];
+      uint8_t expect_decrypt_array3[16 * 3];
+
+      memcpy(expect_cipher_array3 + (16 * 0), expect_cipher_array, 16);
+      memcpy(expect_cipher_array3 + (16 * 1), expect_cipher_array, 16);
+      memcpy(expect_cipher_array3 + (16 * 2), expect_cipher_array, 16);
+
+      memcpy(expect_decrypt_array3 + (16 * 0), expect_decrypt_array, 16);
+      memcpy(expect_decrypt_array3 + (16 * 1), expect_decrypt_array, 16);
+      memcpy(expect_decrypt_array3 + (16 * 2), expect_decrypt_array, 16);
+
+      r = speck_decrypt_ex(ctx, expect_cipher_array3, decrypted_array3, 16*3);
+      if(r <0) {return 1; }
+      for(int i=0; i<16*3; i++) {
+        if(decrypted_array3[i] != expect_decrypt_array3[i]) {
+          printf("not match odd size decrypted idx:%d  0x%02x != 0x%02x\n", i, decrypted_array3[i], expect_decrypt_array3[i]);
+          return 1;
+        }
+      }
+
+      speck_finish(&ctx);
     }
 
     return 0;
