@@ -24,6 +24,9 @@
 #define SPECK_H
 
 #include <stdint.h>
+#if EMSCRIPTEN
+#include <emscripten/emscripten.h>
+#endif
 
 #ifdef SPECKAPI
 #undef SPECKAPI
@@ -31,6 +34,8 @@
 
 #if _WIN32
 #define SPECKAPI __declspec(dllexport)
+#elif EMSCRIPTEN
+#define SPECKAPI EMSCRIPTEN_KEEPALIVE
 #else
 #ifdef __GNUC__
 #if __GNUC__ >= 4
