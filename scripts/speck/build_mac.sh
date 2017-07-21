@@ -11,8 +11,8 @@ pushd ${BASEDIR} > /dev/null
 # build
 pushd build > /dev/null
 cmake -DENABLE_TESTING=ON -DCMAKE_BUILD_TYPE=Release ..
-make -j8
-make test
+cmake --build . --clean-first
+ctest .
 popd > /dev/null
 
 # create bundle file
