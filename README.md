@@ -1,6 +1,7 @@
 [![Build Status](https://travis-ci.org/Naruto/simon-speck-c.svg?branch=develop)](https://travis-ci.org/Naruto/simon-speck-c?branch=develop)
 [![Windows build status](https://ci.appveyor.com/api/projects/status/niji0dd7q1euolvk?svg=true)](https://ci.appveyor.com/project/Naruto/simon-speck)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/10443/badge.svg)](https://scan.coverity.com/projects/10443)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2FNaruto%2Fsimon-speck-c.svg?type=shield)](https://app.fossa.io/projects/git%2Bhttps%3A%2F%2Fgithub.com%2FNaruto%2Fsimon-speck-c?ref=badge_shield)
 
 # simon-speck-c
 simon and speck are lightweight block cipher algorithms, published by NSA.([iadgov/simon-speck](https://github.com/iadgov/simon-speck))
@@ -104,3 +105,7 @@ scripts\speck\build_win.bat
 
 dll library is outputted to `libs/win` directory.
 
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2FNaruto%2Fsimon-speck-c.svg?type=large)](https://app.fossa.io/projects/git%2Bhttps%3A%2F%2Fgithub.com%2FNaruto%2Fsimon-speck-c?ref=badge_large)
