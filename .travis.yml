@@ -33,5 +33,11 @@ install:
     fi
   - cmake --version
   - popd
+
+before_script:
+  - npm install -g license-cli
+  - license-cli auth a65e59483ab5d056191a1e7d4e9e0447
+  - license-cli scan -r $TRAVIS_COMMIT
+
 script: if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then ./scripts/speck/build_linux.sh ; fi
 
