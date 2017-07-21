@@ -3,18 +3,22 @@ env:
   global:
     - secure: "vyyh54RJ4C3ht4RZkrWIe3qxecOh+dsZLw75NHBz5OY/3blfL+YBz5/ZPzKgC1lYOz2lhhrbnr0BptL9kIjdXF1riT43DWRBeGIR9ePR/EaSC/A5jx/FExYI72XSNfl6lpaxbNeKGp7j553WSIdiVmKdpRm4vyexbEz+ZKS/7uznu6+4Tv8PFW4kdcn80cLsl61flLC8eMs3Vy70UXZu6oH+4z7n1quN5Apd0gbcvXWRbEHb9laUNUQNbQw1yIpCfYnzyVaBzesynJbwxSMzMn8QEWfBwTlYIBXi3hw4Ax0eZTJ3EF2ew72R7CM3mw5OnkAsmEqakWrOxk9iKUIhhdbH4AO/b8SQw6W8gJ5Mce5Lf8vx7TR+0NzGp4WtLtAXMYMvMWe0JDVcmyB5YQIs12+a0K0O5nXEDFG+/xcV1REpJBOlpiNHixTSe0cRAd8CMEr9YfCJXZlgmJm81QMJf4Tq/6y3ANMLSNBBtFRdZVi6j1y0Mo8fCsrgBSJ9Ul24NLOY++VfPxeWPupsv9efj89IUOIOr5ZSX1s8Xge+4DNgBJkwFvYUb+1v4qlJzV1R4Px2xaUn7DjYpde7bAUsv/Cydqx8b5ky5Zd94yd9BcpWBFkO5N2Acy5S4r//2z3ZVkQvEzoiG3P8DRjTYbqRst6hDc92I9hcI1++wEl9QWc="
 
-before_install:
-      - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+matrix:
+  include:
+    - os: osx
+    - os: linux
+      before_install:
+        - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
 
-addons:
-  coverity_scan:
-    project:
-      name: "Naruto/simon_speck"
-      description: "<Your project description here>"
-    notification_email: tnaruto@gmail.com
-    build_command_prepend: "rm -rf build && mkdir -p build && cd build && cmake .."
-    build_command: "make -j4"
-    branch_pattern: develop
+      addons:
+        coverity_scan:
+          project:
+            name: "Naruto/simon_speck"
+            description: "<Your project description here>"
+          notification_email: tnaruto@gmail.com
+          build_command_prepend: "rm -rf build && mkdir -p build && cd build && cmake .."
+          build_command: "make -j4"
+          branch_pattern: develop
 
 install: 
   - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
@@ -33,5 +37,15 @@ install:
     fi
   - cmake --version
   - popd
-script: if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then ./scripts/speck/build_linux.sh ; fi
+
+script:
+  - |
+    if [[ "${COVERITY_SCAN_BRANCH}" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+      ./scripts/speck/build_linux.sh
+    fi
+  - |
+    if [[ "${COVERITY_SCAN_BRANCH}" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      ./scripts/speck/build_mac.sh
+      ./scripts/speck/build_ios.sh
+    fi
 
