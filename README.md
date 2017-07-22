@@ -19,6 +19,7 @@ support platforms are linux, iOS, Android ndk, macOS and Windows.
     - linux
         - x86_64
         - arm
+        - aarch64
     - iOS
         - armv7
         - armv7s
@@ -26,8 +27,11 @@ support platforms are linux, iOS, Android ndk, macOS and Windows.
         - x86 (simulator)
         - x86_64 (simulator)
     - android
+        - armeabi
         - armeabi-v7a
         - x86
+        - x86_64
+        - arm64-v8a
     - macOS
         - x86_64
     - windows
