@@ -93,13 +93,18 @@ set(CMAKE_C_STANDARD 11)
 if(ENABLE_NEON)
   if(((IOS_ARCH MATCHES "armv7") OR (IOS_ARCH MATCHES "arm64")) OR
     ((CMAKE_ANDROID_ARCH_ABI MATCHES armeabi-v7a)) OR
-    (CMAKE_C_COMPILER MATCHES ".*arm-linux-gnueabi-gcc$"))
+    ((CMAKE_C_COMPILER MATCHES ".*arm-linux-gnueabi-gcc$") OR (CMAKE_C_COMPILER MATCHES ".*aarch64-linux-gnu-gcc$")))
     set(WITH_NEON ON)
   endif()
 endif()
 
 if(WITH_NEON)
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfloat-abi=softfp -mfpu=neon")
+  if(CMAKE_C_COMPILER MATCHES ".*aarch64-linux-gnu-gcc$")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
+  else()
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfloat-abi=softfp -mfpu=neon")
+  endif() 
+  
   if(IOS)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
   endif()
