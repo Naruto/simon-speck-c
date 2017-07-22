@@ -2,7 +2,7 @@
 # Root CMake file for simon and speck
 # ----------------------------------------------------------------------------
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.7)
 
 project(simon_speck CXX C)
 
@@ -15,6 +15,7 @@ project(simon_speck CXX C)
 # ===================================================
 option(ENABLE_STATIC "Build a static version of the libraries?" OFF)
 option(DISABLE_SHARED "Do not build a shared version of the libraries?" OFF)
+option(ENABLE_TESTING "Enable ctest?" OFF)
 
 
 # simon speck build options
@@ -88,16 +89,46 @@ endif()
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_C_STANDARD 11)
 
-set(libspeck_SRCS src/speck/speck.c)
+# ARM NEON
+if(ENABLE_NEON)
+  if(((IOS_ARCH MATCHES "armv7") OR (IOS_ARCH MATCHES "arm64")) OR
+    ((CMAKE_ANDROID_ARCH_ABI MATCHES armeabi-v7a) OR (CMAKE_ANDROID_ARCH_ABI MATCHES arm64-v8a)) OR
+    ((CMAKE_C_COMPILER MATCHES ".*arm-linux-gnueabi-gcc$") OR (CMAKE_C_COMPILER MATCHES ".*aarch64-linux-gnu-gcc$")))
+    set(WITH_NEON ON)
+  endif()
+endif()
+
+if(WITH_NEON)
+  if((CMAKE_C_COMPILER MATCHES ".*aarch64-linux-gnu-gcc$") OR
+     (CMAKE_ANDROID_ARCH_ABI MATCHES arm64-v8a))
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
+  else()
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfloat-abi=softfp -mfpu=neon")
+  endif() 
+  
+  if(IOS)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
+  endif()
+endif()
+
+if(WITH_NEON)
+  set(libspeck_SRCS src/speck/speck_neon.c)
+else()
+  set(libspeck_SRCS src/speck/speck.c)
+endif()
 if(WIN32)
-set(libspeck_SRCS ${libspeck_SRCS} src/speck/dllmain.c)
+  set(libspeck_SRCS ${libspeck_SRCS} src/speck/dllmain.c)
 endif(WIN32)
-set(libspeck_HEADER src/speck/speck.h)
+set(libspeck_HEADER src/speck/speck.h src/speck/speck_private.h)
 
 add_library(speck
         SHARED
         ${libspeck_SRCS}
         )
+
+if (WITH_NEON)
+  target_compile_definitions(speck PRIVATE "-DWITH_NEON")
+endif()
 
 
 if (DISABLE_SHARED)
@@ -117,5 +148,12 @@ set_target_properties(libspeck_static PROPERTIES OUTPUT_NAME "speck")
 #install(TARGETS libspeck_static LIBRARY DESTINATION ${LIB_INSTALL_DIR} ARCHIVE DESTINATION ${LIB_INSTALL_DIR})
 endif (ENABLE_STATIC AND NOT DISABLE_SHARED)
 
-#add_executable(speck_test src/speck/speck_test.cpp)
-#target_link_libraries(speck_test PUBLIC speck)
+if (NOT (IOS OR ANDROID))
+  add_executable(speck_test src/speck/speck_test.cpp)
+  target_link_libraries(speck_test PUBLIC speck)
+endif()
+
+if(ENABLE_TESTING)
+  enable_testing()
+  add_subdirectory("test")
+endif()

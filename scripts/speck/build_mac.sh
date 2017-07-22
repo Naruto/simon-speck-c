@@ -10,8 +10,9 @@ pushd ${BASEDIR} > /dev/null
 /bin/mkdir build
 # build
 pushd build > /dev/null
-cmake -DCMAKE_BUILD_TYPE=Release ..
-make -j8
+cmake -DENABLE_TESTING=ON -DCMAKE_BUILD_TYPE=Release ..
+cmake --build . --clean-first
+ctest .
 popd > /dev/null
 
 # create bundle file

@@ -10,8 +10,9 @@ pushd ${BASEDIR} > /dev/null
 /bin/mkdir build
 # build
 pushd build > /dev/null
-cmake -DCMAKE_BUILD_TYPE=Release ..
+cmake -DENABLE_TESTING=ON -DCMAKE_BUILD_TYPE=Release ..
 make -j8
+make test
 popd > /dev/null
 
 /bin/mkdir -p libs/linux
