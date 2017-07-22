@@ -7,7 +7,7 @@ BASEDIR=`cd ${BASEDIR} && pwd -P`
 
 pushd ${BASEDIR} > /dev/null
 
-SYSTEM_VERSION=16
+SYSTEM_VERSION=21
 
 android_ndk_build() {
     SYSTEM_VERSION=$1
@@ -27,9 +27,10 @@ android_ndk_build() {
     /bin/cp build/libspeck.so libs/android/${ARCH}
 }
 
+android_ndk_build ${SYSTEM_VERSION} "armeabi"
 android_ndk_build ${SYSTEM_VERSION} "armeabi-v7a" "-DCMAKE_ANDROID_ARM_NEON=ON -DENABLE_NEON=ON"
 android_ndk_build ${SYSTEM_VERSION} "x86"
-#    "x86_64"
-#    "arm64-v8a"
+android_ndk_build ${SYSTEM_VERSION} "x86_64"
+android_ndk_build ${SYSTEM_VERSION} "arm64-v8a" "-DENABLE_NEON=ON"
 
 popd > /dev/null
