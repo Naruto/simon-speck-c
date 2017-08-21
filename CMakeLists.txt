@@ -21,6 +21,7 @@ option(ENABLE_TESTING "Enable ctest?" OFF)
 # simon speck build options
 # ===================================================
 option(ENABLE_NEON "Enable NEON instructions" OFF)
+option(ENABLE_AVX2 "Enable AXV2 instructions" OFF)
 
 
 # ----------------------------------------------------------------------------
@@ -111,11 +112,24 @@ if(WITH_NEON)
   endif()
 endif()
 
+if(ENABLE_AVX2)
+  # TODO: improve check avx
+  include(cmake/Modules/FindSSE.cmake)
+  if(AVX_FOUND)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mavx2")
+    set(WITH_AVX2 ON)
+  endif()
+endif()
+
 if(WITH_NEON)
   set(libspeck_SRCS src/speck/speck_neon.c)
+elseif(WITH_AVX2)
+  set(libspeck_SRCS src/speck/speck_avx2.c)
 else()
   set(libspeck_SRCS src/speck/speck.c)
 endif()
+
 if(WIN32)
   set(libspeck_SRCS ${libspeck_SRCS} src/speck/dllmain.c)
 endif(WIN32)
