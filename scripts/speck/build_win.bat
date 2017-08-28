@@ -13,8 +13,9 @@ set OUTPUTDIR=%PROJDIR%output\win32\
 rmdir /S/Q %BUILDDIR%
 mkdir %BUILDDIR%
 cd %BUILDDIR%
-cmake %PROJDIR% -G"Visual Studio 14 2015" -DBUILD_SHARED_LIBS=ON -DCMAKE_CONFIGURATION_TYPES=Release
-%MSBUILDBIN% ALL_BUILD.vcxproj /property:Configuration=Release
+cmake %PROJDIR% -G"Visual Studio 14 2015" -DBUILD_SHARED_LIBS=ON -DENABLE_TESTING=ON -DCMAKE_CONFIGURATION_TYPES=Release || EXIT /B 1
+cmake --build . --config Release --clean-first || EXIT /B 1
+ctest -C Release . || EXIT /B 1
 cd ..
 
 set BUILDDIR=%PROJDIR%build_win64\
@@ -22,6 +23,7 @@ set OUTPUTDIR=%PROJDIR%output\win64\
 rmdir /S/Q %BUILDDIR%
 mkdir %BUILDDIR%
 cd %BUILDDIR%
-cmake %PROJDIR% -G"Visual Studio 14 2015 Win64" -DBUILD_SHARED_LIBS=ON -DCMAKE_CONFIGURATION_TYPES=Release
-%MSBUILDBIN% ALL_BUILD.vcxproj /property:Configuration=Release
+cmake %PROJDIR% -G"Visual Studio 14 2015 Win64" -DBUILD_SHARED_LIBS=ON -DENABLE_TESTING=ON -DENABLE_AVX2=ON -DCMAKE_CONFIGURATION_TYPES=Release || EXIT /B 1
+cmake --build . --config Release --clean-first || EXIT /B 1
+ctest -C Release . || EXIT /B 1
 cd ..
