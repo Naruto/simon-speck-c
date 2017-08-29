@@ -112,12 +112,18 @@ if(WITH_NEON)
   endif()
 endif()
 
+# Intel AVX2
 if(ENABLE_AVX2)
-  # TODO: improve check avx
-  include(cmake/Modules/FindSSE.cmake)
+  if(MSVC)
+    set(avx2_flags "/arch:AVX2")
+  else()
+    set(avx2_flags "-mavx2")
+  endif()
+  try_compile(AVX_FOUND "${CMAKE_CURRENT_BINARY_DIR}" "${CMAKE_SOURCE_DIR}/cmake/checks/cpu_avx2.c"
+    COMPILE_DEFINITIONS "${avx2_flags}")
+
   if(AVX_FOUND)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mavx2")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${avx2_flags}")
     set(WITH_AVX2 ON)
   endif()
 endif()
