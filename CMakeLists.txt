@@ -90,25 +90,29 @@ endif()
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_C_STANDARD 11)
 
-# ARM NEON
-if(ENABLE_NEON)
-  if(((IOS_ARCH MATCHES "armv7") OR (IOS_ARCH MATCHES "arm64")) OR
-    ((CMAKE_ANDROID_ARCH_ABI MATCHES armeabi-v7a) OR (CMAKE_ANDROID_ARCH_ABI MATCHES arm64-v8a)) OR
-    ((CMAKE_C_COMPILER MATCHES ".*arm-linux-gnueabi-gcc$") OR (CMAKE_C_COMPILER MATCHES ".*aarch64-linux-gnu-gcc$")))
-    set(WITH_NEON ON)
-  endif()
+# architectures
+# FIXME
+if((IOS_ARCH MATCHES "armv7") OR (CMAKE_ANDROID_ARCH_ABI MATCHES armeabi-v7a) OR (CMAKE_C_COMPILER MATCHES ".*arm-linux-gnueabi-gcc$"))
+  set(ARM ON)
+elseif((IOS_ARCH MATCHES "arm64") OR (CMAKE_ANDROID_ARCH_ABI MATCHES arm64-v8a) OR (CMAKE_C_COMPILER MATCHES ".*aarch64-linux-gnu-gcc$"))
+  set(AARCH64 ON)
 endif()
 
-if(WITH_NEON)
-  if((CMAKE_C_COMPILER MATCHES ".*aarch64-linux-gnu-gcc$") OR
-     (CMAKE_ANDROID_ARCH_ABI MATCHES arm64-v8a))
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
-  else()
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfloat-abi=softfp -mfpu=neon")
-  endif() 
-  
-  if(IOS)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
+# ARM NEON
+if(ENABLE_NEON)
+  if(ARM OR AARCH64)
+    if(AARCH64)
+      set(neon_flags "-O3")
+    elseif(ARM)
+      set(neon_flags "-mfloat-abi=softfp -mfpu=neon")
+    endif()
+
+    try_compile(NEON_FOUND "${CMAKE_CURRENT_BINARY_DIR}" "${CMAKE_SOURCE_DIR}/cmake/checks/cpu_neon.c"
+      COMPILE_DEFINITIONS "${neon_flags}")
+    if(NEON_FOUND)
+      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${neon_flags}")
+      set(WITH_NEON ON)
+    endif()
   endif()
 endif()
 
