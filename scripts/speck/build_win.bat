@@ -22,6 +22,6 @@ set OUTPUTDIR=%PROJDIR%output\win64\
 rmdir /S/Q %BUILDDIR%
 mkdir %BUILDDIR%
 cd %BUILDDIR%
-cmake %PROJDIR% -G"Visual Studio 14 2015 Win64" -DBUILD_SHARED_LIBS=ON -DCMAKE_CONFIGURATION_TYPES=Release
+cmake %PROJDIR% -G"Visual Studio 14 2015 Win64" -DBUILD_SHARED_LIBS=ON -DENABLE_AVX2=ON -DCMAKE_CONFIGURATION_TYPES=Release
 %MSBUILDBIN% ALL_BUILD.vcxproj /property:Configuration=Release
 cd ..
