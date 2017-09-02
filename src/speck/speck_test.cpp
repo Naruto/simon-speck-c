@@ -112,7 +112,7 @@ int main() {
         speck_ctx_t *ctx = speck_init(SPECK_ENCRYPT_TYPE_128_128, SPECK_BLOCK_CIPHER_MODE_ECB, s_key);
         if(!ctx) return 1;
 
-        size_t siz = 128;
+        size_t siz = 80;
         int i;
         unsigned char *plain_text = (unsigned char*)calloc(1, siz);
         unsigned char *crypted_text = (unsigned char*)calloc(1, siz);
@@ -120,7 +120,8 @@ int main() {
 
         printf("ECB stream ph2\n");
 
-        memcpy(plain_text, "abcdefghijklmnopqrstyvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", siz);
+        char *test = "abcdefghijklmnopqrstyvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstyvwxyz";
+        memcpy(plain_text, test, strlen(test));
         printf("%20s ", "plain text :");
         for(i=siz-1;i>=0;i--)
             printf("%02x ", plain_text[i]);
