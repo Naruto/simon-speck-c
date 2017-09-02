@@ -17,26 +17,26 @@ support platforms are linux, iOS, Android ndk, macOS and Windows.
         - 128/128
 - platforms, architectures
     - linux
-        - x86_64
-        - arm
-        - aarch64
+        - x86_64(enable AVX2)
+        - arm(enable NEON)
+        - aarch64(enable NEON)
     - iOS
-        - armv7
-        - armv7s
-        - arm64
+        - armv7(enable NEON)
+        - armv7s(enable NEON)
+        - arm64(enable NEON)
         - x86 (simulator)
         - x86_64 (simulator)
     - android
         - armeabi
-        - armeabi-v7a
+        - armeabi-v7a(enable NEON)
         - x86
         - x86_64
-        - arm64-v8a
+        - arm64-v8a(enable NEON)
     - macOS
-        - x86_64
+        - x86_64(enable AVX2)
     - windows
         - x86
-        - x86_64
+        - x86_64(enable AVX2)
 
 # Requirements
 ## common

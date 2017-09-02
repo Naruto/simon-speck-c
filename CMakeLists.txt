@@ -21,6 +21,7 @@ option(ENABLE_TESTING "Enable ctest?" OFF)
 # simon speck build options
 # ===================================================
 option(ENABLE_NEON "Enable NEON instructions" OFF)
+option(ENABLE_AVX2 "Enable AXV2 instructions" OFF)
 
 
 # ----------------------------------------------------------------------------
@@ -89,33 +90,56 @@ endif()
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_C_STANDARD 11)
 
+# architectures
+# FIXME
+if((IOS_ARCH MATCHES "armv7") OR (CMAKE_ANDROID_ARCH_ABI MATCHES armeabi-v7a) OR (CMAKE_C_COMPILER MATCHES ".*arm-linux-gnueabi-gcc$"))
+  set(ARM ON)
+elseif((IOS_ARCH MATCHES "arm64") OR (CMAKE_ANDROID_ARCH_ABI MATCHES arm64-v8a) OR (CMAKE_C_COMPILER MATCHES ".*aarch64-linux-gnu-gcc$"))
+  set(AARCH64 ON)
+endif()
+
 # ARM NEON
 if(ENABLE_NEON)
-  if(((IOS_ARCH MATCHES "armv7") OR (IOS_ARCH MATCHES "arm64")) OR
-    ((CMAKE_ANDROID_ARCH_ABI MATCHES armeabi-v7a) OR (CMAKE_ANDROID_ARCH_ABI MATCHES arm64-v8a)) OR
-    ((CMAKE_C_COMPILER MATCHES ".*arm-linux-gnueabi-gcc$") OR (CMAKE_C_COMPILER MATCHES ".*aarch64-linux-gnu-gcc$")))
-    set(WITH_NEON ON)
+  if(ARM OR AARCH64)
+    if(AARCH64)
+      set(neon_flags "-O3")
+    elseif(ARM)
+      set(neon_flags "-mfloat-abi=softfp -mfpu=neon")
+    endif()
+
+    try_compile(NEON_FOUND "${CMAKE_CURRENT_BINARY_DIR}" "${CMAKE_SOURCE_DIR}/cmake/checks/cpu_neon.c"
+      COMPILE_DEFINITIONS "${neon_flags}")
+    if(NEON_FOUND)
+      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${neon_flags}")
+      set(WITH_NEON ON)
+    endif()
   endif()
 endif()
 
-if(WITH_NEON)
-  if((CMAKE_C_COMPILER MATCHES ".*aarch64-linux-gnu-gcc$") OR
-     (CMAKE_ANDROID_ARCH_ABI MATCHES arm64-v8a))
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
+# Intel AVX2
+if(ENABLE_AVX2)
+  if(MSVC)
+    set(avx2_flags "/arch:AVX2")
   else()
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfloat-abi=softfp -mfpu=neon")
-  endif() 
-  
-  if(IOS)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
+    set(avx2_flags "-mavx2")
+  endif()
+  try_compile(AVX_FOUND "${CMAKE_CURRENT_BINARY_DIR}" "${CMAKE_SOURCE_DIR}/cmake/checks/cpu_avx2.c"
+    COMPILE_DEFINITIONS "${avx2_flags}")
+
+  if(AVX_FOUND)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${avx2_flags}")
+    set(WITH_AVX2 ON)
   endif()
 endif()
 
 if(WITH_NEON)
   set(libspeck_SRCS src/speck/speck_neon.c)
+elseif(WITH_AVX2)
+  set(libspeck_SRCS src/speck/speck_avx2.c)
 else()
   set(libspeck_SRCS src/speck/speck.c)
 endif()
+
 if(WIN32)
   set(libspeck_SRCS ${libspeck_SRCS} src/speck/dllmain.c)
 endif(WIN32)
