@@ -36,13 +36,13 @@ int main() {
         printf("ECB block encrypt decrypt\n");
 
         speck_encrypt(ctx, plain_text, cipher_text);
-        printf("%20s 0x%llx 0x%llx\n", "encrypted : ", cipher_text[1], cipher_text[0]);
+        printf("%20s0x%llx 0x%llx\n", "encrypted : ", cipher_text[1], cipher_text[0]);
         if(!(cipher_text[0] == s_cipher_text[0] && cipher_text[1] == s_cipher_text[1])) {
             return 1;
         }
 
         speck_decrypt(ctx, cipher_text, decrypted_text);
-        printf("%20s 0x%llx 0x%llx\n", "decrypted : ", decrypted_text[1], decrypted_text[0]);
+        printf("%20s0x%llx 0x%llx\n", "decrypted : ", decrypted_text[1], decrypted_text[0]);
         if(!(decrypted_text[0] == s_plain_text[0] && decrypted_text[1] == s_plain_text[1])) {
             return 1;
         }
@@ -67,13 +67,13 @@ int main() {
 
         printf("ECB stream ph1\n");
 
-        printf("%20s ", "plain text :");
+        printf("%20s", "plain text : ");
         for(i=siz-1;i >=0;i--)
             printf("%02x ", plain_text[i]);
         printf("\n");
 
         speck_encrypt_ex(ctx, plain_text, crypted_text, siz);
-        printf("%20s ", "encrypted text :");
+        printf("%20s", "encrypted text : ");
         for(i=siz-1;i >=0;i--)
             printf("%02x ", crypted_text[i]);
         printf("\n");
@@ -86,7 +86,7 @@ int main() {
         }
 
         speck_decrypt_ex(ctx, crypted_text, decrypted_text, siz);
-        printf("%20s ", "decrypted text :");
+        printf("%20s", "decrypted text : ");
         for(int i=siz-1;i >=0;i--)
             printf("%02x ", decrypted_text[i]);
         printf("\n");
@@ -122,19 +122,19 @@ int main() {
 
         char *test = "abcdefghijklmnopqrstyvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstyvwxyz";
         memcpy(plain_text, test, strlen(test));
-        printf("%20s ", "plain text :");
+        printf("%20s", "plain text : ");
         for(i=siz-1;i>=0;i--)
             printf("%02x ", plain_text[i]);
         printf("\n");
 
         speck_encrypt_ex(ctx, plain_text, crypted_text, siz);
-        printf("%20s ", "encrypted text :");
+        printf("%20s", "encrypted text : ");
         for(i=siz-1;i>=0;i--)
             printf("%02x ", crypted_text[i]);
         printf("\n");
 
         speck_decrypt_ex(ctx, crypted_text, decrypted_text, siz);
-        printf("%20s ", "decrypted text :");
+        printf("%20s", "decrypted text : ");
         for(i=siz-1;i>=0;i--)
             printf("%02x ", decrypted_text[i]);
         printf("\n");
