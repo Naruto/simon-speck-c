@@ -18,8 +18,14 @@ matrix:
             - g++-aarch64-linux-gnu
             - gcc-arm-linux-gnueabi
             - g++-arm-linux-gnueabi
+            # - gcc-mips-linux-gnu
+            # - g++-mips-linux-gnu
+            - gcc-powerpc-linux-gnu
+            - g++-powerpc-linux-gnu
             - qemu-user-static
             - qemu-system-arm
+            # - qemu-system-mips
+            - qemu-system-ppc
         coverity_scan:
           project:
             name: "Naruto/simon_speck"
@@ -55,6 +61,8 @@ script:
       ./scripts/speck/build_linux.sh
       ./scripts/speck/build_linux_arm.sh
       ./scripts/speck/build_linux_aarch64.sh
+      # ./scripts/speck/build_linux_mips.sh
+      ./scripts/speck/build_linux_powerpc.sh
     fi
   - |
     if [[ "${COVERITY_SCAN_BRANCH}" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
