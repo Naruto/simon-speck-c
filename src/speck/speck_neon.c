@@ -1,6 +1,6 @@
 #include <arm_neon.h>
 #include <stdlib.h>
-#include "speck.h"
+#include <speck/speck.h>
 #include "speck_private.h"
 
 struct speck_ctx_t_ {

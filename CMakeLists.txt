@@ -132,18 +132,24 @@ if(ENABLE_AVX2)
   endif()
 endif()
 
-if(WITH_NEON)
-  set(libspeck_SRCS src/speck/speck_neon.c)
-elseif(WITH_AVX2)
-  set(libspeck_SRCS src/speck/speck_avx2.c)
-else()
-  set(libspeck_SRCS src/speck/speck.c)
-endif()
 
+# source
+if(WITH_NEON)
+  set(libspeck_SRCS ${libspeck_SRCS} src/speck/speck_neon.c)
+elseif(WITH_AVX2)
+  set(libspeck_SRCS ${libspeck_SRCS} src/speck/speck_avx2.c)
+else()
+  set(libspeck_SRCS ${libspeck_SRCS} src/speck/speck.c)
+endif()
 if(WIN32)
   set(libspeck_SRCS ${libspeck_SRCS} src/speck/dllmain.c)
 endif(WIN32)
-set(libspeck_HEADER src/speck/speck.h src/speck/speck_private.h)
+
+# header
+set(libspeck_PUBLIC_HEADER include/speck/speck.h)
+set(libspeck_PRIVATE_HEADER src/speck/speck_private.h)
+include_directories(${CMAKE_SOURCE_DIR}/include)
+set(libspeck_SRCS ${libspeck_SRCS} ${libspeck_PUBLIC_HEADER} ${libspeck_PRIVATE_HEADER})
 
 add_library(speck
         SHARED

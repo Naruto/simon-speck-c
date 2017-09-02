@@ -1,4 +1,4 @@
-#include "speck.h"
+#include <speck/speck.h>
 #include <stdio.h>
 #include <string.h>
 #include <cstdlib>

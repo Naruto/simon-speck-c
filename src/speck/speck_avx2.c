@@ -1,6 +1,6 @@
 #include <immintrin.h>
 #include <stdlib.h>
-#include "speck.h"
+#include <speck/speck.h>
 #include "speck_private.h"
 
 #define LANE_NUM 4

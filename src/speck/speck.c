@@ -1,7 +1,7 @@
 //
 // Created by naruto on 16/08/11.
 //
-#include "speck.h"
+#include <speck/speck.h>
 #include <stdlib.h>
 #include "speck_private.h"
 

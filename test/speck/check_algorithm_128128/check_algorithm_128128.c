@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "speck.h"
+#include <speck/speck.h>
 
 // https://eprint.iacr.org/2013/404.pdf
 //
