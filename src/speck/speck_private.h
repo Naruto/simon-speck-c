@@ -22,4 +22,6 @@ static inline void cast_uint64_to_uint8_array(unsigned char *dst, uint64_t src) 
     dst[7] = (unsigned char)((src & 0xff00000000000000) >> 56);
 }
 
+int is_validate_key_len(enum speck_encrypt_type type, int key_len);
+
 #endif /* __SPECK_PRIVATE_H__ */

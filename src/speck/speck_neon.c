@@ -1,6 +1,6 @@
 #include <arm_neon.h>
-#include <stdlib.h>
 #include <speck/speck.h>
+#include <stdlib.h>
 #include "speck_private.h"
 
 struct speck_ctx_t_ {
@@ -194,14 +194,17 @@ int speck_decrypt_ex(speck_ctx_t *ctx, const unsigned char *crypted, unsigned ch
     return 0;
 }
 
-speck_ctx_t *speck_init(enum speck_encrypt_type type, enum speck_block_cipher_mode mode ,const uint64_t key[2]) {
+speck_ctx_t *speck_init(enum speck_encrypt_type type, enum speck_block_cipher_mode mode, const uint8_t *key, int key_len) {
+    if (key == NULL) return NULL;
+    if (!is_validate_key_len(type, key_len)) return NULL;
+
     speck_ctx_t *ctx = (speck_ctx_t *)calloc(1, sizeof(speck_ctx_t));
     if (!ctx) return NULL;
 
     // calc key schedule
-    uint64x1_t b = vld1_u64(&key[0]);  //= key[0];
-    uint64x1_t a = vld1_u64(&key[1]);  //= key[1];
-    ctx->key_schedule[0] = key[0];
+    uint64x1_t b = vreinterpret_u64_u8(vld1_u8(key));      //= key[0];
+    uint64x1_t a = vreinterpret_u64_u8(vld1_u8(key + 8));  //= key[1];
+    vst1_u64(&ctx->key_schedule[0], b);
     for (unsigned i = 0; i < ROUNDS - 1; i++) {
         uint64_t idx = (uint64_t)i;
         uint64x1_t vidx = vld1_u64(&idx);

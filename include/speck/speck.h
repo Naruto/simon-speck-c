@@ -49,8 +49,7 @@ enum speck_block_cipher_mode {
 extern "C" {
 #endif  //__cplusplus
 
-SPECKAPI speck_ctx_t *
-speck_init(enum speck_encrypt_type type, enum speck_block_cipher_mode mode, const uint64_t key[2]);
+SPECKAPI speck_ctx_t *speck_init(enum speck_encrypt_type type, enum speck_block_cipher_mode mode, const uint8_t *key, int key_len);
 
 SPECKAPI void speck_encrypt(speck_ctx_t *ctx, const uint64_t plaintext[2], uint64_t ciphertext[2]);
 

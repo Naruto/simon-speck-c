@@ -1,6 +1,6 @@
 #include <immintrin.h>
-#include <stdlib.h>
 #include <speck/speck.h>
+#include <stdlib.h>
 #include "speck_private.h"
 
 #define LANE_NUM 4
@@ -305,14 +305,19 @@ int speck_decrypt_ex(speck_ctx_t *ctx, const unsigned char *crypted, unsigned ch
     return 0;
 }
 
-speck_ctx_t *speck_init(enum speck_encrypt_type type, enum speck_block_cipher_mode mode ,const uint64_t key[2]) {
+speck_ctx_t *speck_init(enum speck_encrypt_type type, enum speck_block_cipher_mode mode, const uint8_t *key, int key_len) {
+    if (key == NULL) return NULL;
+    if (!is_validate_key_len(type, key_len)) return NULL;
+
     speck_ctx_t *ctx = (speck_ctx_t *)calloc(1, sizeof(speck_ctx_t));
     if (!ctx) return NULL;
 
     // calc key schedule
-    uint64_t b = key[0];
-    uint64_t a = key[1];
-    ctx->key_schedule[0] = key[0];
+    uint64_t b;
+    uint64_t a;
+    cast_uint8_array_to_uint64(&b, key + 0);
+    cast_uint8_array_to_uint64(&a, key + 8);
+    ctx->key_schedule[0] = b;
     for (unsigned i = 0; i < ROUNDS - 1; i++) {
         uint64_t k = i;
         speck_round_x1(&a, &b, &k);

@@ -134,6 +134,7 @@ endif()
 
 
 # source
+set(libspeck_SRCS ${libspeck_SRCS} src/speck/speck_common.c)
 if(WITH_NEON)
   set(libspeck_SRCS ${libspeck_SRCS} src/speck/speck_neon.c)
 elseif(WITH_AVX2)
