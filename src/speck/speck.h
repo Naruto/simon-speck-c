@@ -46,8 +46,6 @@ extern "C" {
 
 SPECKAPI speck_ctx_t *speck_init(enum speck_encrypt_type type, const uint64_t key[2]);
 
-SPECKAPI speck_ctx_t *speck_init2(const unsigned char *key);
-
 SPECKAPI void speck_encrypt(speck_ctx_t *ctx, const uint64_t plaintext[2],uint64_t ciphertext[2]);
 
 SPECKAPI void speck_decrypt(speck_ctx_t *ctx, const uint64_t ciphertext[2], uint64_t decrypted[2]);

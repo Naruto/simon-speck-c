@@ -226,13 +226,6 @@ speck_ctx_t *speck_init(enum speck_encrypt_type type, const uint64_t key[2]) {
     return ctx;
 }
 
-speck_ctx_t *speck_init2(const unsigned char *key) {
-    uint64_t key_tmp[2];
-    cast_uint8_array_to_uint64(&key_tmp[0], key);
-    cast_uint8_array_to_uint64(&key_tmp[1], key + 8);
-    return speck_init(SPECK_ENCRYPT_TYPE_128_128, key_tmp);
-}
-
 void speck_finish(speck_ctx_t **ctx) {
     if(!ctx) return;
     free(*ctx);
