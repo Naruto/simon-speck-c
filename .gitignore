@@ -33,3 +33,5 @@ build*/
 libs
 
 cmake-build-*
+
+.DS_Store
