@@ -14,14 +14,14 @@
 #if _WIN32
 #define SPECKAPI __declspec(dllexport)
 #else
-#  ifdef __GNUC__
-#    if __GNUC__ >= 4
-#      define SPECKAPI  __attribute__((visibility ("default")))
-#    else
-#    endif
-#  else
-#    define SPECKAPI
-#  endif
+#ifdef __GNUC__
+#if __GNUC__ >= 4
+#define SPECKAPI __attribute__((visibility("default")))
+#else
+#endif
+#else
+#define SPECKAPI
+#endif
 #endif
 
 typedef struct speck_ctx_t_ speck_ctx_t;
@@ -42,11 +42,11 @@ enum speck_encrypt_type {
 
 #ifdef __cplusplus
 extern "C" {
-#endif //__cplusplus
+#endif  //__cplusplus
 
 SPECKAPI speck_ctx_t *speck_init(enum speck_encrypt_type type, const uint64_t key[2]);
 
-SPECKAPI void speck_encrypt(speck_ctx_t *ctx, const uint64_t plaintext[2],uint64_t ciphertext[2]);
+SPECKAPI void speck_encrypt(speck_ctx_t *ctx, const uint64_t plaintext[2], uint64_t ciphertext[2]);
 
 SPECKAPI void speck_decrypt(speck_ctx_t *ctx, const uint64_t ciphertext[2], uint64_t decrypted[2]);
 
@@ -58,8 +58,8 @@ SPECKAPI void speck_finish(speck_ctx_t **ctx);
 
 #ifdef __cplusplus
 }
-#endif //__cplusplus
+#endif  //__cplusplus
 
 #undef SPECKAPI
 #define SPECKAPI
-#endif //SPECK_H
+#endif  // SPECK_H
