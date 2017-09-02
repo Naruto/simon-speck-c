@@ -7,8 +7,7 @@
 
 static inline void cast_uint8_array_to_uint64(uint64_t *dst, const unsigned char *array) {
     // TODO: byte order
-    *dst =  (uint64_t)array[7] << 56 | (uint64_t)array[6] << 48 | (uint64_t)array[5] << 40 | (uint64_t)array[4] << 32 |
-            (uint64_t)array[3] << 24 | (uint64_t)array[2] << 16 | (uint64_t)array[1] << 8  | (uint64_t)array[0];
+    *dst = (uint64_t)array[7] << 56 | (uint64_t)array[6] << 48 | (uint64_t)array[5] << 40 | (uint64_t)array[4] << 32 | (uint64_t)array[3] << 24 | (uint64_t)array[2] << 16 | (uint64_t)array[1] << 8 | (uint64_t)array[0];
 }
 
 static inline void cast_uint64_to_uint8_array(unsigned char *dst, uint64_t src) {
