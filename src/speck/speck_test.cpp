@@ -8,7 +8,7 @@ int main() {
     key[0] = 0x0706050403020100;
     key[1] = 0x0f0e0d0c0b0a0908;
 
-    speck_ctx_t *ctx = speck_init(SPECK_ENCRYPT_TYPE_128_128, key);
+    speck_ctx_t *ctx = speck_init(SPECK_ENCRYPT_TYPE_128_128, SPECK_BLOCK_CIPHER_MODE_ECB, key);
     if(!ctx) return 1;
 
     {

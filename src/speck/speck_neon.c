@@ -194,7 +194,7 @@ int speck_decrypt_ex(speck_ctx_t *ctx, const unsigned char *crypted, unsigned ch
     return 0;
 }
 
-speck_ctx_t *speck_init(enum speck_encrypt_type type, const uint64_t key[2]) {
+speck_ctx_t *speck_init(enum speck_encrypt_type type, enum speck_block_cipher_mode mode ,const uint64_t key[2]) {
     speck_ctx_t *ctx = (speck_ctx_t *)calloc(1, sizeof(speck_ctx_t));
     if (!ctx) return NULL;
 
