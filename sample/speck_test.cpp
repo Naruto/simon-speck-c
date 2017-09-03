@@ -78,7 +78,7 @@ int main() {
             printf("%02x ", plain_text[i]);
         printf("\n");
 
-        speck_encrypt_ex(ctx, plain_text, crypted_text, siz);
+        speck_ecb_encrypt(ctx, plain_text, crypted_text, siz);
         printf("%20s", "encrypted text : ");
         for(i=siz-1;i >=0;i--)
             printf("%02x ", crypted_text[i]);
@@ -91,7 +91,7 @@ int main() {
             }
         }
 
-        speck_decrypt_ex(ctx, crypted_text, decrypted_text, siz);
+        speck_ecb_decrypt(ctx, crypted_text, decrypted_text, siz);
         printf("%20s", "decrypted text : ");
         for(int i=siz-1;i >=0;i--)
             printf("%02x ", decrypted_text[i]);
@@ -133,13 +133,13 @@ int main() {
             printf("%02x ", plain_text[i]);
         printf("\n");
 
-        speck_encrypt_ex(ctx, plain_text, crypted_text, siz);
+        speck_ecb_encrypt(ctx, plain_text, crypted_text, siz);
         printf("%20s", "encrypted text : ");
         for(i=siz-1;i>=0;i--)
             printf("%02x ", crypted_text[i]);
         printf("\n");
 
-        speck_decrypt_ex(ctx, crypted_text, decrypted_text, siz);
+        speck_ecb_decrypt(ctx, crypted_text, decrypted_text, siz);
         printf("%20s", "decrypted text : ");
         for(i=siz-1;i>=0;i--)
             printf("%02x ", decrypted_text[i]);

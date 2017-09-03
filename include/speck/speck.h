@@ -54,6 +54,10 @@ SPECKAPI int speck_encrypt_ex(speck_ctx_t *ctx, const unsigned char *plain, unsi
 
 SPECKAPI int speck_decrypt_ex(speck_ctx_t *ctx, const unsigned char *crypted, unsigned char *decrypted, int crypted_len);
 
+SPECKAPI int speck_ecb_encrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out, int len);
+
+SPECKAPI int speck_ecb_decrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out, int len);
+
 SPECKAPI void speck_finish(speck_ctx_t **ctx);
 
 #ifdef __cplusplus

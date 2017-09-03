@@ -62,7 +62,7 @@ int encrypt_stream_test(int block_num, const char *test_explain) {
         memcpy(expect_crypted_stream + (i * BLOCK_SIZE), s_cipher_text_stream, sizeof(s_cipher_text_stream));
     }
 
-    r = speck_encrypt_ex(ctx, plain_text_stream, crypted_text_stream, BLOCK_SIZE * block_num);
+    r = speck_ecb_encrypt(ctx, plain_text_stream, crypted_text_stream, BLOCK_SIZE * block_num);
     if (r < 0) {
         r = 1;
         goto finish;
@@ -120,7 +120,7 @@ int decrypt_stream_test(int block_num, const char *test_explain) {
         memcpy(expect_decrypted_stream + (i * BLOCK_SIZE), s_plain_text_stream, sizeof(s_plain_text_stream));
     }
 
-    r = speck_decrypt_ex(ctx, crypted_text_stream, decrypted_text_stream, BLOCK_SIZE * block_num);
+    r = speck_ecb_decrypt(ctx, crypted_text_stream, decrypted_text_stream, BLOCK_SIZE * block_num);
     if (r < 0) {
         r = 1;
         goto finish;
