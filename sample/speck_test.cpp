@@ -26,7 +26,7 @@ int main() {
 
     // block encrypt & decrypt
     {
-        speck_ctx_t *ctx = speck_init(SPECK_ENCRYPT_TYPE_128_128, SPECK_BLOCK_CIPHER_MODE_ECB, s_key_stream, sizeof(s_key_stream));
+        speck_ctx_t *ctx = speck_init(SPECK_ENCRYPT_TYPE_128_128, s_key_stream, sizeof(s_key_stream));
         if(!ctx) return 1;
 
         uint64_t plain_text[2];
@@ -60,7 +60,7 @@ int main() {
 
     // ECB stream encrypt & decrypt
     {
-        speck_ctx_t *ctx = speck_init(SPECK_ENCRYPT_TYPE_128_128, SPECK_BLOCK_CIPHER_MODE_ECB, s_key_stream, sizeof(s_key_stream));
+        speck_ctx_t *ctx = speck_init(SPECK_ENCRYPT_TYPE_128_128, s_key_stream, sizeof(s_key_stream));
         if(!ctx) return 1;
 
         int i;
@@ -115,7 +115,7 @@ int main() {
 
     // ECB stream encrypt & decrypt ph2
     {
-        speck_ctx_t *ctx = speck_init(SPECK_ENCRYPT_TYPE_128_128, SPECK_BLOCK_CIPHER_MODE_ECB, s_key_stream, sizeof(s_key_stream));
+        speck_ctx_t *ctx = speck_init(SPECK_ENCRYPT_TYPE_128_128, s_key_stream, sizeof(s_key_stream));
         if(!ctx) return 1;
 
         size_t siz = 80;

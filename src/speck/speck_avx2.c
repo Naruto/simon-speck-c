@@ -301,14 +301,13 @@ int speck_decrypt_ex(speck_ctx_t *ctx, const unsigned char *crypted, unsigned ch
     return 0;
 }
 
-speck_ctx_t *speck_init(enum speck_encrypt_type type, enum speck_block_cipher_mode mode, const uint8_t *key, int key_len) {
+speck_ctx_t *speck_init(enum speck_encrypt_type type, const uint8_t *key, int key_len) {
     if (key == NULL) return NULL;
     if (!is_validate_key_len(type, key_len)) return NULL;
 
     speck_ctx_t *ctx = (speck_ctx_t *)calloc(1, sizeof(speck_ctx_t));
     if (!ctx) return NULL;
     ctx->type = type;
-    ctx->mode = mode;
 
     // calc key schedule
     uint64_t b;

@@ -40,16 +40,11 @@ enum speck_encrypt_type {
     SPECK_ENCRYPT_TYPE_128_256,
 };
 
-enum speck_block_cipher_mode {
-    SPECK_BLOCK_CIPHER_MODE_ECB = 0,
-    SPECK_BLOCK_CIPHER_MODE_CTR,
-};
-
 #ifdef __cplusplus
 extern "C" {
 #endif  //__cplusplus
 
-SPECKAPI speck_ctx_t *speck_init(enum speck_encrypt_type type, enum speck_block_cipher_mode mode, const uint8_t *key, int key_len);
+SPECKAPI speck_ctx_t *speck_init(enum speck_encrypt_type type, const uint8_t *key, int key_len);
 
 SPECKAPI void speck_encrypt(speck_ctx_t *ctx, const uint64_t plaintext[2], uint64_t ciphertext[2]);
 

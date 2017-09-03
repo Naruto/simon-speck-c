@@ -51,7 +51,7 @@ int encrypt_stream_test(int block_num, const char *test_explain) {
         goto finish;
     }
 
-    ctx = speck_init(SPECK_ENCRYPT_TYPE_128_128, SPECK_BLOCK_CIPHER_MODE_ECB, s_key_stream, sizeof(s_key_stream));
+    ctx = speck_init(SPECK_ENCRYPT_TYPE_128_128, s_key_stream, sizeof(s_key_stream));
     if (!ctx) {
         r = 1;
         goto finish;
@@ -109,7 +109,7 @@ int decrypt_stream_test(int block_num, const char *test_explain) {
         goto finish;
     }
 
-    ctx = speck_init(SPECK_ENCRYPT_TYPE_128_128, SPECK_BLOCK_CIPHER_MODE_ECB, s_key_stream, sizeof(s_key_stream));
+    ctx = speck_init(SPECK_ENCRYPT_TYPE_128_128, s_key_stream, sizeof(s_key_stream));
     if (!ctx) {
         r = 1;
         goto finish;
@@ -147,7 +147,7 @@ int main() {
 
     // encrypt test
     {
-        speck_ctx_t *ctx = speck_init(SPECK_ENCRYPT_TYPE_128_128, SPECK_BLOCK_CIPHER_MODE_ECB, s_key_stream, sizeof(s_key_stream));
+        speck_ctx_t *ctx = speck_init(SPECK_ENCRYPT_TYPE_128_128, s_key_stream, sizeof(s_key_stream));
         if (!ctx) return 1;
 
         uint64_t crypted_text[2];
@@ -163,7 +163,7 @@ int main() {
 
     // decrypt test
     {
-        speck_ctx_t *ctx = speck_init(SPECK_ENCRYPT_TYPE_128_128, SPECK_BLOCK_CIPHER_MODE_ECB, s_key_stream, sizeof(s_key_stream));
+        speck_ctx_t *ctx = speck_init(SPECK_ENCRYPT_TYPE_128_128, s_key_stream, sizeof(s_key_stream));
         if (!ctx) return 1;
 
         uint64_t decrypted_text[2];

@@ -10,7 +10,6 @@
 struct speck_ctx_t_ {
     uint64_t key_schedule[ROUNDS];
     enum speck_encrypt_type type;
-    enum speck_block_cipher_mode mode;
 };
 
 static inline void cast_uint8_array_to_uint64(uint64_t *dst, const unsigned char *array) {
