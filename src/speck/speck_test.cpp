@@ -38,14 +38,17 @@ int main() {
 
         printf("ECB block encrypt decrypt\n");
 
+        printf("%20s0x%016llx 0x%016llx\n", "key : ", s_key[1], s_key[0]);
+        printf("%20s0x%016llx 0x%016llx\n", "plain : ", plain_text[1], plain_text[0]);
+
         speck_encrypt(ctx, plain_text, cipher_text);
-        printf("%20s0x%llx 0x%llx\n", "encrypted : ", cipher_text[1], cipher_text[0]);
+        printf("%20s0x%016llx 0x%016llx\n", "encrypted : ", cipher_text[1], cipher_text[0]);
         if(!(cipher_text[0] == s_cipher_text[0] && cipher_text[1] == s_cipher_text[1])) {
             return 1;
         }
 
         speck_decrypt(ctx, cipher_text, decrypted_text);
-        printf("%20s0x%llx 0x%llx\n", "decrypted : ", decrypted_text[1], decrypted_text[0]);
+        printf("%20s0x%016llx 0x%016llx\n", "decrypted : ", decrypted_text[1], decrypted_text[0]);
         if(!(decrypted_text[0] == s_plain_text[0] && decrypted_text[1] == s_plain_text[1])) {
             return 1;
         }
