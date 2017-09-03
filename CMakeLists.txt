@@ -143,7 +143,7 @@ else()
   set(libspeck_SRCS ${libspeck_SRCS} src/speck/speck.c)
 endif()
 if(WIN32)
-  set(libspeck_SRCS ${libspeck_SRCS} src/speck/dllmain.c)
+  set(libspeck_SRCS ${libspeck_SRCS} src/utils/dllmain.c)
 endif(WIN32)
 
 # header
