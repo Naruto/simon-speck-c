@@ -5,10 +5,6 @@
 
 #define LANE_NUM 4
 
-struct speck_ctx_t_ {
-    uint64_t key_schedule[ROUNDS];
-};
-
 static inline void speck_round_x1(uint64_t *x, uint64_t *y, const uint64_t *k) {
     *x = (*x >> 8) | (*x << (8 * sizeof(*x) - 8));  // x = ROTR(x, 8)
     *x += *y;
@@ -311,6 +307,8 @@ speck_ctx_t *speck_init(enum speck_encrypt_type type, enum speck_block_cipher_mo
 
     speck_ctx_t *ctx = (speck_ctx_t *)calloc(1, sizeof(speck_ctx_t));
     if (!ctx) return NULL;
+    ctx->type = type;
+    ctx->mode = mode;
 
     // calc key schedule
     uint64_t b;

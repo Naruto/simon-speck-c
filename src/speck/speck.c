@@ -6,10 +6,6 @@
 #include <stdlib.h>
 #include "speck_private.h"
 
-struct speck_ctx_t_ {
-    uint64_t key_schedule[ROUNDS];
-};
-
 static inline void speck_round(uint64_t *x, uint64_t *y, uint64_t k) {
     *x = (*x >> 8) | (*x << (8 * sizeof(*x) - 8));  // x = ROTR(x, 8)
     *x += *y;
@@ -100,6 +96,8 @@ speck_ctx_t *speck_init(enum speck_encrypt_type type, enum speck_block_cipher_mo
 
     speck_ctx_t *ctx = calloc(1, sizeof(speck_ctx_t));
     if (!ctx) return NULL;
+    ctx->type = type;
+    ctx->mode = mode;
 
     // calc key schedule
     uint64_t b;

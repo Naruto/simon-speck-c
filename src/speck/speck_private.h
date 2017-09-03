@@ -1,9 +1,17 @@
 #ifndef __SPECK_PRIVATE_H__
 #define __SPECK_PRIVATE_H__
 
+#include <speck/speck.h>
+
 #define ROUNDS 32
 #define WORDS 8
 #define BLOCK_SIZE (WORDS * 2)
+
+struct speck_ctx_t_ {
+    uint64_t key_schedule[ROUNDS];
+    enum speck_encrypt_type type;
+    enum speck_block_cipher_mode mode;
+};
 
 static inline void cast_uint8_array_to_uint64(uint64_t *dst, const unsigned char *array) {
     // TODO: byte order
