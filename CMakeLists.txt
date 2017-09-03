@@ -180,7 +180,7 @@ set_target_properties(libspeck_static PROPERTIES OUTPUT_NAME "speck")
 endif (ENABLE_STATIC AND NOT DISABLE_SHARED)
 
 if (NOT (IOS OR ANDROID))
-  add_executable(speck_test src/speck/speck_test.cpp)
+  add_executable(speck_test sample/speck_test.cpp)
   target_link_libraries(speck_test PUBLIC speck)
 endif()
 
