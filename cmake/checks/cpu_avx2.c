@@ -7,4 +7,4 @@ void test()
     int data[8] = {0,0,0,0, 0,0,0,0};
     __m256i a = _mm256_loadu_si256((const __m256i *)data);
 }
-int main() { return 0; }
+int main() { test(); return 0; }
