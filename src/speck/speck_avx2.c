@@ -1,13 +1,9 @@
 #include <immintrin.h>
+#include <speck/speck.h>
 #include <stdlib.h>
-#include "speck.h"
 #include "speck_private.h"
 
 #define LANE_NUM 4
-
-struct speck_ctx_t_ {
-    uint64_t key_schedule[ROUNDS];
-};
 
 static inline void speck_round_x1(uint64_t *x, uint64_t *y, const uint64_t *k) {
     *x = (*x >> 8) | (*x << (8 * sizeof(*x) - 8));  // x = ROTR(x, 8)
@@ -305,14 +301,28 @@ int speck_decrypt_ex(speck_ctx_t *ctx, const unsigned char *crypted, unsigned ch
     return 0;
 }
 
-speck_ctx_t *speck_init(enum speck_encrypt_type type, const uint64_t key[2]) {
+int speck_ecb_encrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out, int len) {
+    return speck_encrypt_ex(ctx, in, out, len);
+}
+
+int speck_ecb_decrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out, int len) {
+    return speck_decrypt_ex(ctx, in, out, len);
+}
+
+speck_ctx_t *speck_init(enum speck_encrypt_type type, const uint8_t *key, int key_len) {
+    if (key == NULL) return NULL;
+    if (!is_validate_key_len(type, key_len)) return NULL;
+
     speck_ctx_t *ctx = (speck_ctx_t *)calloc(1, sizeof(speck_ctx_t));
     if (!ctx) return NULL;
+    ctx->type = type;
 
     // calc key schedule
-    uint64_t b = key[0];
-    uint64_t a = key[1];
-    ctx->key_schedule[0] = key[0];
+    uint64_t b;
+    uint64_t a;
+    cast_uint8_array_to_uint64(&b, key + 0);
+    cast_uint8_array_to_uint64(&a, key + 8);
+    ctx->key_schedule[0] = b;
     for (unsigned i = 0; i < ROUNDS - 1; i++) {
         uint64_t k = i;
         speck_round_x1(&a, &b, &k);

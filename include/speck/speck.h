@@ -44,7 +44,7 @@ enum speck_encrypt_type {
 extern "C" {
 #endif  //__cplusplus
 
-SPECKAPI speck_ctx_t *speck_init(enum speck_encrypt_type type, const uint64_t key[2]);
+SPECKAPI speck_ctx_t *speck_init(enum speck_encrypt_type type, const uint8_t *key, int key_len);
 
 SPECKAPI void speck_encrypt(speck_ctx_t *ctx, const uint64_t plaintext[2], uint64_t ciphertext[2]);
 
@@ -53,6 +53,10 @@ SPECKAPI void speck_decrypt(speck_ctx_t *ctx, const uint64_t ciphertext[2], uint
 SPECKAPI int speck_encrypt_ex(speck_ctx_t *ctx, const unsigned char *plain, unsigned char *crypted, int plain_len);
 
 SPECKAPI int speck_decrypt_ex(speck_ctx_t *ctx, const unsigned char *crypted, unsigned char *decrypted, int crypted_len);
+
+SPECKAPI int speck_ecb_encrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out, int len);
+
+SPECKAPI int speck_ecb_decrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out, int len);
 
 SPECKAPI void speck_finish(speck_ctx_t **ctx);
 

@@ -10,6 +10,7 @@ format_all_source_files() {
 
     find src -iname '*.[c|h|cpp|cxx|cc]' -exec clang-format -i -style=file {} \;
     find test -iname '*.[c|h|cpp|cxx|cc]' -exec clang-format -i -style=file {} \;
+    find include -iname '*.[c|h|cpp|cxx|cc]' -exec clang-format -i -style=file {} \;
 
     popd > /dev/null # ${BASEDIR}
 }

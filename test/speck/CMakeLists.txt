@@ -1,1 +1,1 @@
-add_subdirectory("check_algorithm_128128")
+add_subdirectory("speck128128ecb")
