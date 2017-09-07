@@ -250,7 +250,7 @@ int main() {
 
         char *test = "abcdefghijklmnopqrstyvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstyvwxyz";
         memcpy(plain_text, test, strlen(test));
-        generate_iv(iv_text, siz);
+        generate_iv(iv_text, 16);
 
         printf("%20s", "iv text : ");
         for(i=16-1;i >=0;i--)
@@ -274,6 +274,11 @@ int main() {
         printf("%20s", "decrypted text : ");
         for(i=siz-1;i>=0;i--)
             printf("%02x ", decrypted_text[i]);
+        printf("\n");
+
+        printf("%20s", "count iv text : ");
+        for(i=16-1;i >=0;i--)
+            printf("%02x ", count_iv_text[i]);
         printf("\n");
 
         // check
