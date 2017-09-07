@@ -142,13 +142,17 @@ elseif(WITH_AVX2)
 else()
   set(libspeck_SRCS ${libspeck_SRCS} src/speck/speck.c)
 endif()
+set(libspeck_SRCS ${libspeck_SRCS} src/speck/speck_ctr.c)
+
+
 if(WIN32)
   set(libspeck_SRCS ${libspeck_SRCS} src/utils/dllmain.c)
 endif(WIN32)
 
 # header
 set(libspeck_PUBLIC_HEADER include/speck/speck.h)
-set(libspeck_PRIVATE_HEADER src/speck/speck_private.h)
+set(libspeck_PRIVATE_HEADER src/speck/speck_private.h src/speck/speck_ctr_private.h)
+
 include_directories(${CMAKE_SOURCE_DIR}/include)
 set(libspeck_SRCS ${libspeck_SRCS} ${libspeck_PUBLIC_HEADER} ${libspeck_PRIVATE_HEADER})
 

@@ -58,6 +58,10 @@ SPECKAPI int speck_ecb_encrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out
 
 SPECKAPI int speck_ecb_decrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out, int len);
 
+SPECKAPI int speck_ctr_encrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out, int len, uint8_t *iv, int iv_len);
+
+SPECKAPI int speck_ctr_decrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out, int len, uint8_t *iv, int iv_len);
+
 SPECKAPI void speck_finish(speck_ctx_t **ctx);
 
 #ifdef __cplusplus

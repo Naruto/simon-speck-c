@@ -1,1 +1,1 @@
-add_subdirectory("speck128128ecb")
+add_subdirectory("speck128128")
