@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-/* increment counter (64-bit int) by 1 */
+/* increment counter (128-bit int) by 1 */
 static inline uint8_t *ctr128_inc(uint8_t counter[16]) {
   uint32_t n=16;
   uint8_t  c;
