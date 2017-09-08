@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include "speck_private.h"
 
+#define LANE_NUM 2
+
 static inline void speck_round_x1(uint64x1_t *x, uint64x1_t *y, const uint64x1_t *k) {
     *x = vsri_n_u64(vshl_n_u64(*x, (64 - 8)), *x, 8);
     *x = vadd_u64(*x, *y);
@@ -89,31 +91,31 @@ void speck_decrypt(speck_ctx_t *ctx, const uint64_t ciphertext[2], uint64_t decr
     vst1_u64(&decrypted[1], decrypted_x1[1]);
 }
 
-int speck_encrypt_ex(speck_ctx_t *ctx, const unsigned char *plain, unsigned char *crypted, int plain_len) {
+int speck_encrypt_ex(speck_ctx_t *ctx, const uint8_t *plain, uint8_t *crypted, int plain_len) {
     if (plain_len % BLOCK_SIZE != 0) {
         return -1;
     }
-    int len = plain_len / (BLOCK_SIZE * 2);
+    int len = plain_len / (BLOCK_SIZE * LANE_NUM);
 
-    int odd = plain_len % (BLOCK_SIZE * 2);
+    int odd = plain_len % (BLOCK_SIZE * LANE_NUM);
 
     int i = 0;
     int array_idx = 0;
-    unsigned char *cur_plain = (unsigned char *)(plain);
-    unsigned char *cur_crypted;
+    uint8_t *cur_plain = (uint8_t *)(plain);
+    uint8_t *cur_crypted;
     for (i = 0; i < len; i++) {
         uint64x2_t crypted_lane[2];
 
-        array_idx = (i * (BLOCK_SIZE * 2));
+        array_idx = (i * (BLOCK_SIZE * LANE_NUM));
 
-        cur_plain = (unsigned char *)(plain + array_idx);
+        cur_plain = (uint8_t *)(plain + array_idx);
 
         crypted_lane[0] = vcombine_u64(vreinterpret_u64_u8(vld1_u8(cur_plain + (WORDS * 0))), vreinterpret_u64_u8(vld1_u8(cur_plain + (WORDS * 2))));
         crypted_lane[1] = vcombine_u64(vreinterpret_u64_u8(vld1_u8(cur_plain + (WORDS * 1))), vreinterpret_u64_u8(vld1_u8(cur_plain + (WORDS * 3))));
 
         speck_encrypt_x2_inline(ctx, crypted_lane);
 
-        cur_crypted = (unsigned char *)(crypted + array_idx);
+        cur_crypted = (uint8_t *)(crypted + array_idx);
 
         vst1_u8(cur_crypted + (WORDS * 0), vreinterpret_u8_u64(vget_low_u64(crypted_lane[0])));
         vst1_u8(cur_crypted + (WORDS * 1), vreinterpret_u8_u64(vget_low_u64(crypted_lane[1])));
@@ -123,47 +125,47 @@ int speck_encrypt_ex(speck_ctx_t *ctx, const unsigned char *plain, unsigned char
     if (odd) {
         uint64x1_t crypted_block[2];
 
-        array_idx = (i * (BLOCK_SIZE * 2));
+        array_idx = (i * (BLOCK_SIZE * LANE_NUM));
 
-        cur_plain = (unsigned char *)(plain + array_idx);
+        cur_plain = (uint8_t *)(plain + array_idx);
 
         crypted_block[0] = vreinterpret_u64_u8(vld1_u8(cur_plain + (WORDS * 0)));
         crypted_block[1] = vreinterpret_u64_u8(vld1_u8(cur_plain + (WORDS * 1)));
 
         speck_encrypt_x1_inline(ctx, crypted_block);
 
-        cur_crypted = (unsigned char *)(crypted + array_idx);
-        vst1_u8(cur_crypted, vreinterpret_u8_u64(crypted_block[0]));
-        vst1_u8(cur_crypted + WORDS, vreinterpret_u8_u64(crypted_block[1]));
+        cur_crypted = (uint8_t *)(crypted + array_idx);
+        vst1_u8(cur_crypted + (WORDS * 0), vreinterpret_u8_u64(crypted_block[0]));
+        vst1_u8(cur_crypted + (WORDS * 1), vreinterpret_u8_u64(crypted_block[1]));
     }
 
     return 0;
 }
 
-int speck_decrypt_ex(speck_ctx_t *ctx, const unsigned char *crypted, unsigned char *decrypted, int crypted_len) {
+int speck_decrypt_ex(speck_ctx_t *ctx, const uint8_t *crypted, uint8_t *decrypted, int crypted_len) {
     if (crypted_len % BLOCK_SIZE != 0) {
         return -1;
     }
-    int len = crypted_len / (BLOCK_SIZE * 2);
+    int len = crypted_len / (BLOCK_SIZE * LANE_NUM);
 
-    int odd = crypted_len % (BLOCK_SIZE * 2);
+    int odd = crypted_len % (BLOCK_SIZE * LANE_NUM);
 
     int i = 0;
     int array_idx = 0;
-    unsigned char *cur_crypted = (unsigned char *)(crypted);
-    unsigned char *cur_decrypted = (unsigned char *)(decrypted);
+    uint8_t *cur_crypted = (uint8_t *)(crypted);
+    uint8_t *cur_decrypted = (uint8_t *)(decrypted);
     for (i = 0; i < len; i++) {
         uint64x2_t decrypted_lane[2];
 
-        array_idx = (i * (BLOCK_SIZE * 2));
+        array_idx = (i * (BLOCK_SIZE * LANE_NUM));
 
-        cur_crypted = (unsigned char *)(crypted + array_idx);
+        cur_crypted = (uint8_t *)(crypted + array_idx);
         decrypted_lane[0] = vcombine_u64(vreinterpret_u64_u8(vld1_u8(cur_crypted + (WORDS * 0))), vreinterpret_u64_u8(vld1_u8(cur_crypted + (WORDS * 2))));
         decrypted_lane[1] = vcombine_u64(vreinterpret_u64_u8(vld1_u8(cur_crypted + (WORDS * 1))), vreinterpret_u64_u8(vld1_u8(cur_crypted + (WORDS * 3))));
 
         speck_decrypt_x2_inline(ctx, decrypted_lane);
 
-        cur_decrypted = (unsigned char *)(decrypted + array_idx);
+        cur_decrypted = (uint8_t *)(decrypted + array_idx);
 
         vst1_u8(cur_decrypted + (WORDS * 0), vreinterpret_u8_u64(vget_low_u64(decrypted_lane[0])));
         vst1_u8(cur_decrypted + (WORDS * 1), vreinterpret_u8_u64(vget_low_u64(decrypted_lane[1])));
@@ -173,18 +175,18 @@ int speck_decrypt_ex(speck_ctx_t *ctx, const unsigned char *crypted, unsigned ch
     if (odd) {
         uint64x1_t decrypted_block[2];
 
-        array_idx = (i * (BLOCK_SIZE * 2));
+        array_idx = (i * (BLOCK_SIZE * LANE_NUM));
 
-        cur_crypted = (unsigned char *)(crypted + array_idx);
+        cur_crypted = (uint8_t *)(crypted + array_idx);
 
         decrypted_block[0] = vreinterpret_u64_u8(vld1_u8(cur_crypted + (WORDS * 0)));
         decrypted_block[1] = vreinterpret_u64_u8(vld1_u8(cur_crypted + (WORDS * 1)));
 
         speck_decrypt_x1_inline(ctx, decrypted_block);
 
-        cur_decrypted = (unsigned char *)(decrypted + array_idx);
-        vst1_u8(cur_decrypted, vreinterpret_u8_u64(decrypted_block[0]));
-        vst1_u8(cur_decrypted + WORDS, vreinterpret_u8_u64(decrypted_block[1]));
+        cur_decrypted = (uint8_t *)(decrypted + array_idx);
+        vst1_u8(cur_decrypted + (WORDS * 0), vreinterpret_u8_u64(decrypted_block[0]));
+        vst1_u8(cur_decrypted + (WORDS * 1), vreinterpret_u8_u64(decrypted_block[1]));
     }
 
     return 0;
