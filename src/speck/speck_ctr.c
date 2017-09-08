@@ -21,13 +21,13 @@ int speck_ctr_encrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out, int len
         uint64_t plain_block[2];
         uint64_t iv_block[2];
 
-        cast_uint8_array_to_uint64(&iv_block[0], iv);
-        cast_uint8_array_to_uint64(&iv_block[1], iv + WORDS);
+        cast_uint8_array_to_uint64(&iv_block[0], iv + (WORDS * 0));
+        cast_uint8_array_to_uint64(&iv_block[1], iv + (WORDS * 1));
         ctr128_inc(iv);
 
         speck_encrypt(ctx, iv_block, crypted_iv_block);
 
-        int array_idx = (i * BLOCK_SIZE);
+        int array_idx = (i * (BLOCK_SIZE * LANE_NUM));
 
         uint8_t *cur_plain = (uint8_t *)(in + array_idx);
         cast_uint8_array_to_uint64(&plain_block[0], cur_plain + (WORDS * 0));
