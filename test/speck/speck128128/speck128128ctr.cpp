@@ -118,8 +118,9 @@ int encrypt_decrypt_stream_test(int block_num) {
     finish:
     free(plain_text_stream);
     free(crypted_text_stream);
-    free(origin_iv_text_stream);
+    free(decrypted_text_stream);
     free(iv_text_stream);
+    free(origin_iv_text_stream);
 
     speck_finish(&ctx);
     return r;
@@ -205,8 +206,9 @@ int encrypt_decrypt_random_stream_test(int block_num) {
     free(key_text_stream);
     free(plain_text_stream);
     free(crypted_text_stream);
-    free(origin_iv_text_stream);
+    free(decrypted_text_stream);
     free(iv_text_stream);
+    free(origin_iv_text_stream);
 
     speck_finish(&ctx);
     return r;
