@@ -33,18 +33,18 @@ int encrypt_stream_test(int block_num, const char *test_explain) {
     uint8_t *crypted_text_stream = NULL;
     uint8_t *expect_crypted_stream = NULL;
 
-    plain_text_stream = malloc(BLOCK_SIZE * block_num);
+    plain_text_stream = (uint8_t*)malloc(BLOCK_SIZE * block_num);
     if (!plain_text_stream) {
         r = 1;
         goto finish;
     }
-    crypted_text_stream = malloc(BLOCK_SIZE * block_num);
+    crypted_text_stream = (uint8_t*)malloc(BLOCK_SIZE * block_num);
     ;
     if (!crypted_text_stream) {
         r = 1;
         goto finish;
     }
-    expect_crypted_stream = malloc(BLOCK_SIZE * block_num);
+    expect_crypted_stream = (uint8_t*)malloc(BLOCK_SIZE * block_num);
     ;
     if (!expect_crypted_stream) {
         r = 1;
@@ -91,18 +91,18 @@ int decrypt_stream_test(int block_num, const char *test_explain) {
     uint8_t *decrypted_text_stream = NULL;
     uint8_t *expect_decrypted_stream = NULL;
 
-    crypted_text_stream = malloc(BLOCK_SIZE * block_num);
+    crypted_text_stream = (uint8_t*)malloc(BLOCK_SIZE * block_num);
     ;
     if (!crypted_text_stream) {
         r = 1;
         goto finish;
     }
-    decrypted_text_stream = malloc(BLOCK_SIZE * block_num);
+    decrypted_text_stream = (uint8_t*)malloc(BLOCK_SIZE * block_num);
     if (!decrypted_text_stream) {
         r = 1;
         goto finish;
     }
-    expect_decrypted_stream = malloc(BLOCK_SIZE * block_num);
+    expect_decrypted_stream = (uint8_t*)malloc(BLOCK_SIZE * block_num);
     ;
     if (!expect_decrypted_stream) {
         r = 1;
