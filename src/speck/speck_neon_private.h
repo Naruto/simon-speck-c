@@ -1,6 +1,7 @@
 #ifndef __SPECK_NEON_PRIVATE_H__
 #define __SPECK_NEON_PRIVATE_H__
 
+#include <arm_neon.h>
 #include <speck/speck.h>
 #include <stdint.h>
 #include "speck_private.h"

@@ -1,4 +1,3 @@
-#include <arm_neon.h>
 #include <speck/speck.h>
 #include <stdlib.h>
 #include "speck_neon_private.h"
