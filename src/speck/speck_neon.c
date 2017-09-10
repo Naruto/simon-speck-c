@@ -31,15 +31,15 @@ int speck_encrypt_ex(speck_ctx_t *ctx, const uint8_t *plain, uint8_t *crypted, i
     if (plain_len % BLOCK_SIZE != 0) {
         return -1;
     }
-    int len = plain_len / (BLOCK_SIZE * LANE_NUM);
+    int count = plain_len / (BLOCK_SIZE * LANE_NUM);
 
-    int odd = plain_len % (BLOCK_SIZE * LANE_NUM);
+    int remain = (plain_len % (BLOCK_SIZE * LANE_NUM)) / BLOCK_SIZE;
 
     int i = 0;
     int array_idx = 0;
-    uint8_t *cur_plain = (uint8_t *)(plain);
+    uint8_t *cur_plain;
     uint8_t *cur_crypted;
-    for (i = 0; i < len; i++) {
+    for (i = 0; i < count; i++) {
         uint64x2_t crypted_lane[2];
 
         array_idx = (i * (BLOCK_SIZE * LANE_NUM));
@@ -58,7 +58,7 @@ int speck_encrypt_ex(speck_ctx_t *ctx, const uint8_t *plain, uint8_t *crypted, i
         vst1_u8(cur_crypted + (WORDS * 2), vreinterpret_u8_u64(vget_high_u64(crypted_lane[0])));
         vst1_u8(cur_crypted + (WORDS * 3), vreinterpret_u8_u64(vget_high_u64(crypted_lane[1])));
     }
-    if (odd) {
+    if (remain == 1) {
         uint64x1_t crypted_block[2];
 
         array_idx = (i * (BLOCK_SIZE * LANE_NUM));
@@ -82,15 +82,15 @@ int speck_decrypt_ex(speck_ctx_t *ctx, const uint8_t *crypted, uint8_t *decrypte
     if (crypted_len % BLOCK_SIZE != 0) {
         return -1;
     }
-    int len = crypted_len / (BLOCK_SIZE * LANE_NUM);
+    int count = crypted_len / (BLOCK_SIZE * LANE_NUM);
 
-    int odd = crypted_len % (BLOCK_SIZE * LANE_NUM);
+    int remain = (crypted_len % (BLOCK_SIZE * LANE_NUM)) / BLOCK_SIZE;
 
     int i = 0;
     int array_idx = 0;
     uint8_t *cur_crypted = (uint8_t *)(crypted);
     uint8_t *cur_decrypted = (uint8_t *)(decrypted);
-    for (i = 0; i < len; i++) {
+    for (i = 0; i < count; i++) {
         uint64x2_t decrypted_lane[2];
 
         array_idx = (i * (BLOCK_SIZE * LANE_NUM));
@@ -108,7 +108,7 @@ int speck_decrypt_ex(speck_ctx_t *ctx, const uint8_t *crypted, uint8_t *decrypte
         vst1_u8(cur_decrypted + (WORDS * 2), vreinterpret_u8_u64(vget_high_u64(decrypted_lane[0])));
         vst1_u8(cur_decrypted + (WORDS * 3), vreinterpret_u8_u64(vget_high_u64(decrypted_lane[1])));
     }
-    if (odd) {
+    if (remain == 1) {
         uint64x1_t decrypted_block[2];
 
         array_idx = (i * (BLOCK_SIZE * LANE_NUM));
