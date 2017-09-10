@@ -15,6 +15,9 @@ support platforms are linux, iOS, Android ndk, macOS and Windows.
 - algorithms and block sizes, key sizes
     - speck
         - 128/128
+- block cipher mode
+    - ECB
+    - CTR
 - platforms, architectures
     - linux
         - x86_64(enable AVX2)
