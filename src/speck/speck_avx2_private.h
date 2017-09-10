@@ -1,6 +1,7 @@
 #ifndef __SPECK_PRIVATE_AVX2_H__
 #define __SPECK_PRIVATE_AVX2_H__
 
+#include <immintrin.h>
 #include <speck/speck.h>
 #include <stdint.h>
 #include "speck_private.h"

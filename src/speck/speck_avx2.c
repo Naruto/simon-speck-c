@@ -1,4 +1,3 @@
-#include <immintrin.h>
 #include <speck/speck.h>
 #include <stdlib.h>
 #include "speck_avx2_private.h"
