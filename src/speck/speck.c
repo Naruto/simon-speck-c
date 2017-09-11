@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include "speck_private.h"
 
+#define LANE_NUM 1
+
 static inline void speck_round(uint64_t *x, uint64_t *y, uint64_t k) {
     *x = (*x >> 8) | (*x << (8 * sizeof(*x) - 8));  // x = ROTR(x, 8)
     *x += *y;
@@ -38,54 +40,54 @@ void speck_decrypt(speck_ctx_t *ctx, const uint64_t ciphertext[2], uint64_t decr
     }
 }
 
-int speck_encrypt_ex(speck_ctx_t *ctx, const unsigned char *plain, unsigned char *crypted, int plain_len) {
+int speck_encrypt_ex(speck_ctx_t *ctx, const uint8_t *plain, uint8_t *crypted, int plain_len) {
     if (plain_len % BLOCK_SIZE != 0) {
         return -1;
     }
-    int len = plain_len / BLOCK_SIZE;
+    int count = plain_len / (BLOCK_SIZE * LANE_NUM);
 
     int i;
-    for (i = 0; i < len; i++) {
+    for (i = 0; i < count; i++) {
         uint64_t plain_block[2];
         uint64_t crypted_block[2];
 
-        int array_idx = (i * BLOCK_SIZE);
+        int array_idx = (i * (BLOCK_SIZE * LANE_NUM));
 
-        unsigned char *cur_plain = (unsigned char *)(plain + array_idx);
-        cast_uint8_array_to_uint64(&plain_block[0], cur_plain);
-        cast_uint8_array_to_uint64(&plain_block[1], cur_plain + WORDS);
+        uint8_t *cur_plain = (uint8_t *)(plain + array_idx);
+        cast_uint8_array_to_uint64(&plain_block[0], cur_plain + (WORDS * 0));
+        cast_uint8_array_to_uint64(&plain_block[1], cur_plain + (WORDS * 1));
 
         speck_encrypt(ctx, plain_block, crypted_block);
 
-        unsigned char *cur_crypted = (unsigned char *)(crypted + array_idx);
-        cast_uint64_to_uint8_array(cur_crypted, crypted_block[0]);
-        cast_uint64_to_uint8_array(cur_crypted + WORDS, crypted_block[1]);
+        uint8_t *cur_crypted = (uint8_t *)(crypted + array_idx);
+        cast_uint64_to_uint8_array(cur_crypted + (WORDS * 0), crypted_block[0]);
+        cast_uint64_to_uint8_array(cur_crypted + (WORDS * 1), crypted_block[1]);
     }
     return 0;
 }
 
-int speck_decrypt_ex(speck_ctx_t *ctx, const unsigned char *crypted, unsigned char *decrypted, int crypted_len) {
+int speck_decrypt_ex(speck_ctx_t *ctx, const uint8_t *crypted, uint8_t *decrypted, int crypted_len) {
     if (crypted_len % BLOCK_SIZE != 0) {
         return -1;
     }
-    int len = crypted_len / BLOCK_SIZE;
+    int count = crypted_len / (BLOCK_SIZE * LANE_NUM);
 
     int i;
-    for (i = 0; i < len; i++) {
+    for (i = 0; i < count; i++) {
         uint64_t crypted_block[2];
         uint64_t decrypted_block[2];
 
-        int array_idx = (i * BLOCK_SIZE);
+        int array_idx = (i * (BLOCK_SIZE * LANE_NUM));
 
-        unsigned char *cur_crypted = (unsigned char *)(crypted + array_idx);
-        cast_uint8_array_to_uint64(&crypted_block[0], cur_crypted);
-        cast_uint8_array_to_uint64(&crypted_block[1], cur_crypted + WORDS);
+        uint8_t *cur_crypted = (uint8_t *)(crypted + array_idx);
+        cast_uint8_array_to_uint64(&crypted_block[0], cur_crypted + (WORDS * 0));
+        cast_uint8_array_to_uint64(&crypted_block[1], cur_crypted + (WORDS * 1));
 
         speck_decrypt(ctx, crypted_block, decrypted_block);
 
-        unsigned char *cur_decrypted = (unsigned char *)(decrypted + array_idx);
-        cast_uint64_to_uint8_array(cur_decrypted, decrypted_block[0]);
-        cast_uint64_to_uint8_array(cur_decrypted + WORDS, decrypted_block[1]);
+        uint8_t *cur_decrypted = (uint8_t *)(decrypted + array_idx);
+        cast_uint64_to_uint8_array(cur_decrypted + (WORDS * 0), decrypted_block[0]);
+        cast_uint64_to_uint8_array(cur_decrypted + (WORDS * 1), decrypted_block[1]);
     }
     return 0;
 }

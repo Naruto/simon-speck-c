@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <cstdlib>
+#include <random>
 
 // https://eprint.iacr.org/2013/404.pdf
 //
@@ -21,6 +22,25 @@ static const uint8_t s_plain_text_stream[16] = {
 static const uint8_t s_cipher_text_stream[16] = {
         0x18, 0x0d, 0x57, 0x5c, 0xdf, 0xfe, 0x60, 0x78, 0x65, 0x32, 0x78, 0x79, 0x51, 0x98, 0x5d, 0xa6,
 };
+static const char *s_test_text = "abcdefghijklmnopqrstyvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstyvwxyz";
+
+void generate_iv(uint8_t *iv, size_t iv_len) {
+    std::random_device rd;  //Will be used to obtain a seed for the random number engine
+    std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
+    std::uniform_int_distribution<> dis;
+
+    for(int i=0; i<iv_len; i++) {
+        iv[i] = static_cast<uint8_t>(dis(gen));
+    }
+}
+
+void show_array(const char *explain, const uint8_t *array, size_t len) {
+    printf("%20s ", explain);
+    for(int i=len-1; i >= 0; i--) {
+        printf("%02x ", array[i]);
+    }
+    printf("\n");
+}
 
 int main() {
 
@@ -65,24 +85,18 @@ int main() {
 
         int i;
         size_t siz = 16;
-        unsigned char *plain_text = (unsigned char*) calloc(1, siz);
-        unsigned char *crypted_text = (unsigned char*) calloc(1, siz);
-        unsigned char *decrypted_text = (unsigned char*) calloc(1, siz);
+        uint8_t *plain_text = (uint8_t*) calloc(1, siz);
+        uint8_t *crypted_text = (uint8_t*) calloc(1, siz);
+        uint8_t *decrypted_text = (uint8_t*) calloc(1, siz);
 
         memcpy(plain_text, s_plain_text_stream, sizeof(s_cipher_text_stream));
 
         printf("ECB stream ph1\n");
 
-        printf("%20s", "plain text : ");
-        for(i=siz-1;i >=0;i--)
-            printf("%02x ", plain_text[i]);
-        printf("\n");
+        show_array("plain text :", plain_text, siz);
 
         speck_ecb_encrypt(ctx, plain_text, crypted_text, siz);
-        printf("%20s", "encrypted text : ");
-        for(i=siz-1;i >=0;i--)
-            printf("%02x ", crypted_text[i]);
-        printf("\n");
+        show_array("encrypted text :", crypted_text, siz);
         // check
         for (int i = 0; i < siz; i++) {
             if (s_cipher_text_stream[i] != crypted_text[i]) {
@@ -92,10 +106,7 @@ int main() {
         }
 
         speck_ecb_decrypt(ctx, crypted_text, decrypted_text, siz);
-        printf("%20s", "decrypted text : ");
-        for(int i=siz-1;i >=0;i--)
-            printf("%02x ", decrypted_text[i]);
-        printf("\n");
+        show_array("decrypted text :", decrypted_text, siz);
 
         // check
         for (int i = 0; i < siz; i++) {
@@ -120,30 +131,20 @@ int main() {
 
         size_t siz = 80;
         int i;
-        unsigned char *plain_text = (unsigned char*)calloc(1, siz);
-        unsigned char *crypted_text = (unsigned char*)calloc(1, siz);
-        unsigned char *decrypted_text = (unsigned char*)calloc(1, siz);
+        uint8_t *plain_text = (uint8_t*)calloc(1, siz);
+        uint8_t *crypted_text = (uint8_t*)calloc(1, siz);
+        uint8_t *decrypted_text = (uint8_t*)calloc(1, siz);
 
         printf("ECB stream ph2\n");
 
-        char *test = "abcdefghijklmnopqrstyvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstyvwxyz";
-        memcpy(plain_text, test, strlen(test));
-        printf("%20s", "plain text : ");
-        for(i=siz-1;i>=0;i--)
-            printf("%02x ", plain_text[i]);
-        printf("\n");
+        memcpy(plain_text, s_test_text, strlen(s_test_text));
+        show_array("plain text :", plain_text, siz);
 
         speck_ecb_encrypt(ctx, plain_text, crypted_text, siz);
-        printf("%20s", "encrypted text : ");
-        for(i=siz-1;i>=0;i--)
-            printf("%02x ", crypted_text[i]);
-        printf("\n");
+        show_array("encrypted text :", crypted_text, siz);
 
         speck_ecb_decrypt(ctx, crypted_text, decrypted_text, siz);
-        printf("%20s", "decrypted text : ");
-        for(i=siz-1;i>=0;i--)
-            printf("%02x ", decrypted_text[i]);
-        printf("\n");
+        show_array("decrypted text :", decrypted_text, siz);
 
         // check
         for (int i = 0; i < siz; i++) {
@@ -160,6 +161,106 @@ int main() {
 
         speck_finish(&ctx);
     }
+
+    // CTR stream encrypt & decrypt
+    {
+        speck_ctx_t *ctx = speck_init(SPECK_ENCRYPT_TYPE_128_128, s_key_stream, sizeof(s_key_stream));
+        if(!ctx) return 1;
+
+        int i;
+        size_t siz = 16;
+        size_t iv_siz = 16;
+        uint8_t *plain_text = (uint8_t*) calloc(1, siz);
+        uint8_t *crypted_text = (uint8_t*) calloc(1, siz);
+        uint8_t *decrypted_text = (uint8_t*) calloc(1, siz);
+        uint8_t *iv_text = (uint8_t*) calloc(1, iv_siz);
+        uint8_t *count_iv_text = (uint8_t*) calloc(1, iv_siz);
+
+        memcpy(plain_text, s_plain_text_stream, sizeof(s_cipher_text_stream));
+        generate_iv(iv_text, iv_siz);
+
+        printf("CTR stream ph1\n");
+
+        show_array("iv text :", iv_text, iv_siz);
+
+        show_array("plain text :", plain_text, siz);
+
+        memcpy(count_iv_text, iv_text, iv_siz);
+        speck_ctr_encrypt(ctx, plain_text, crypted_text, siz, count_iv_text, iv_siz);
+        show_array("encrypted text :", crypted_text, siz);
+
+        memcpy(count_iv_text, iv_text, iv_siz);
+        speck_ctr_decrypt(ctx, crypted_text, decrypted_text, siz, count_iv_text, iv_siz);
+        show_array("decrypted text :", decrypted_text, siz);
+
+        // check
+        for (int i = 0; i < siz; i++) {
+            if (s_plain_text_stream[i] != decrypted_text[i]) {
+                printf("decrypted error idx:%d  0x%02x != 0x%02x\n", i, s_plain_text_stream[i], decrypted_text[i]);
+                return 1;
+            }
+        }
+        printf("\n");
+
+        free(decrypted_text);
+        free(crypted_text);
+        free(plain_text);
+        free(iv_text);
+        free(count_iv_text);
+
+        speck_finish(&ctx);
+    }
+
+    // CTR stream encrypt & decrypt ph2
+    {
+        speck_ctx_t *ctx = speck_init(SPECK_ENCRYPT_TYPE_128_128, s_key_stream, sizeof(s_key_stream));
+        if(!ctx) return 1;
+
+        size_t siz = 80;
+        size_t iv_siz = 16;
+        int i;
+        uint8_t *plain_text = (uint8_t*)calloc(1, siz);
+        uint8_t *crypted_text = (uint8_t*)calloc(1, siz);
+        uint8_t *decrypted_text = (uint8_t*)calloc(1, siz);
+        uint8_t *iv_text = (uint8_t*) calloc(1, iv_siz);
+        uint8_t *count_iv_text = (uint8_t*) calloc(1, iv_siz);
+
+        printf("CTR stream ph2\n");
+
+        memcpy(plain_text, s_test_text, strlen(s_test_text));
+        generate_iv(iv_text, iv_siz);
+
+        show_array("iv text :", iv_text, iv_siz);
+
+        show_array("plain text :", plain_text, siz);
+
+        memcpy(count_iv_text, iv_text, iv_siz);
+        speck_ctr_encrypt(ctx, plain_text, crypted_text, siz, count_iv_text, iv_siz);
+        show_array("encrypted text :", crypted_text, siz);
+
+        memcpy(count_iv_text, iv_text, 16);
+        speck_ctr_decrypt(ctx, crypted_text, decrypted_text,siz, count_iv_text, iv_siz);
+        show_array("decrypted text :", decrypted_text, siz);
+
+        show_array("count iv text :", count_iv_text, iv_siz);
+
+        // check
+        for (int i = 0; i < siz; i++) {
+            if (plain_text[i] != decrypted_text[i]) {
+                printf("decrypted error idx:%d  0x%02x != 0x%02x\n", i, plain_text[i], decrypted_text[i]);
+                return 1;
+            }
+        }
+        printf("\n");
+
+        free(decrypted_text);
+        free(crypted_text);
+        free(plain_text);
+        free(iv_text);
+
+        speck_finish(&ctx);
+    }
+
 
     return 0;
 }
