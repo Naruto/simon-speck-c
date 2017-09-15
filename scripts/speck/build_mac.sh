@@ -18,6 +18,7 @@ popd > /dev/null
 # create bundle file
 /bin/rm -rf libs/macos
 /bin/mkdir -p libs/macos
+/bin/cp ./build/libspeck.dylib ./libs/macos
 /bin/mkdir -p libs/macos/speck.bundle
 /bin/mkdir -p libs/macos/speck.bundle/Contents/MacOS
 /bin/cp ./build/libspeck.dylib libs/macos/speck.bundle/Contents/MacOS/speck
