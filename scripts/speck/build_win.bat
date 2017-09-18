@@ -14,7 +14,7 @@ set OUTPUTDIR=%PROJDIR%output\win32\
 rmdir /S/Q %BUILDDIR%
 mkdir %BUILDDIR%
 cd %BUILDDIR%
-cmake %PROJDIR% -G"Visual Studio 14 2015" -DBUILD_SHARED_LIBS=ON -DCMAKE_CONFIGURATION_TYPES=Release
+cmake %PROJDIR% -G"Visual Studio 14 2015" -DENABLE_TESTING=ON -DBUILD_SHARED_LIBS=ON -DCMAKE_CONFIGURATION_TYPES=Release
 %MSBUILDBIN% ALL_BUILD.vcxproj /property:Configuration=Release
 set PATH=%PROJDIR%build_win32/Release;%PATH%
 ctest .
@@ -25,7 +25,7 @@ set OUTPUTDIR=%PROJDIR%output\win64\
 rmdir /S/Q %BUILDDIR%
 mkdir %BUILDDIR%
 cd %BUILDDIR%
-cmake %PROJDIR% -G"Visual Studio 14 2015 Win64" -DBUILD_SHARED_LIBS=ON -DCMAKE_CONFIGURATION_TYPES=Release
+cmake %PROJDIR% -G"Visual Studio 14 2015 Win64" -DENABLE_TESTING=ON -DBUILD_SHARED_LIBS=ON -DCMAKE_CONFIGURATION_TYPES=Release
 %MSBUILDBIN% ALL_BUILD.vcxproj /property:Configuration=Release
 set PATH=%PROJDIR%build_win64/Release;%PATH%
 ctest .
