@@ -110,7 +110,7 @@ bundle file is outputted to `libs/mac` directory.
 scripts\speck\build_win.bat
 ```
 
-dll library is outputted to `libs/win` directory.
+dll library is outputted to `libs/windows` directory.
 
 
 
