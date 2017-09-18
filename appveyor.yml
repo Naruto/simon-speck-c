@@ -19,9 +19,9 @@ build_script:
   - scripts\speck\build_win.bat
 
 artifacts:
-  - path: build_win32.zip
+  - path: ./build_win32
     name: build_win32
 
-  - path: build_win64.zip
+  - path: ./build_win64
     name: build_win64
 
