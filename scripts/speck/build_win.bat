@@ -28,7 +28,7 @@ copy %BUILDDIR%Release\speck.dll %OUTPUTDIR%
 cd ..
 
 set BUILDDIR=%PROJDIR%build_win64\
-set OUTPUTDIR=%PROJDIR%output\win64\
+set OUTPUTDIR=%LIBDIR%windows\win64\
 rmdir /S/Q %BUILDDIR%
 mkdir %BUILDDIR%
 cd %BUILDDIR%
