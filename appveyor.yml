@@ -25,3 +25,6 @@ artifacts:
   - path: ./build_win64
     name: build_win64
 
+  - path: ./libs/windows
+    name: windows
+
