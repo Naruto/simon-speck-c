@@ -48,21 +48,21 @@ int speck_ctr_encrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out, int len
         out_block_lane[0] = _mm256_xor_si256(crypted_iv_block_lane[0], in_block_lane[0]);
         out_block_lane[1] = _mm256_xor_si256(crypted_iv_block_lane[1], in_block_lane[1]);
 
-        _mm256_storeu_si256((__m256i *)&out_blocks[0], crypted_iv_block_lane[0]);
-        _mm256_storeu_si256((__m256i *)&out_blocks[1], crypted_iv_block_lane[1]);
+        _mm256_storeu_si256((__m256i *)&out_blocks[0], out_block_lane[0]);
+        _mm256_storeu_si256((__m256i *)&out_blocks[1], out_block_lane[1]);
 
         cur_crypted = (uint8_t *)(out + array_idx);
-        ((uint64_t *)(cur_crypted + (WORDS * 0)))[0] = out_block_lane[0][0];
-        ((uint64_t *)(cur_crypted + (WORDS * 1)))[0] = out_block_lane[1][0];
+        ((uint64_t *)(cur_crypted + (WORDS * 0)))[0] = out_blocks[0][0];
+        ((uint64_t *)(cur_crypted + (WORDS * 1)))[0] = out_blocks[1][0];
 
-        ((uint64_t *)(cur_crypted + (WORDS * 2)))[0] = out_block_lane[0][1];
-        ((uint64_t *)(cur_crypted + (WORDS * 3)))[0] = out_block_lane[1][1];
+        ((uint64_t *)(cur_crypted + (WORDS * 2)))[0] = out_blocks[0][1];
+        ((uint64_t *)(cur_crypted + (WORDS * 3)))[0] = out_blocks[1][1];
 
-        ((uint64_t *)(cur_crypted + (WORDS * 4)))[0] = out_block_lane[0][2];
-        ((uint64_t *)(cur_crypted + (WORDS * 5)))[0] = out_block_lane[1][2];
+        ((uint64_t *)(cur_crypted + (WORDS * 4)))[0] = out_blocks[0][2];
+        ((uint64_t *)(cur_crypted + (WORDS * 5)))[0] = out_blocks[1][2];
 
-        ((uint64_t *)(cur_crypted + (WORDS * 6)))[0] = out_block_lane[0][3];
-        ((uint64_t *)(cur_crypted + (WORDS * 7)))[0] = out_block_lane[1][3];
+        ((uint64_t *)(cur_crypted + (WORDS * 6)))[0] = out_blocks[0][3];
+        ((uint64_t *)(cur_crypted + (WORDS * 7)))[0] = out_blocks[1][3];
     }
     if (remain == 3) {
         __m256i crypted_iv_block_lane[2];
@@ -92,18 +92,18 @@ int speck_ctr_encrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out, int len
         out_block_lane[0] = _mm256_xor_si256(crypted_iv_block_lane[0], in_block_lane[0]);
         out_block_lane[1] = _mm256_xor_si256(crypted_iv_block_lane[1], in_block_lane[1]);
 
-        _mm256_storeu_si256((__m256i *)&out_blocks[0], crypted_iv_block_lane[0]);
-        _mm256_storeu_si256((__m256i *)&out_blocks[1], crypted_iv_block_lane[1]);
+        _mm256_storeu_si256((__m256i *)&out_blocks[0], out_block_lane[0]);
+        _mm256_storeu_si256((__m256i *)&out_blocks[1], out_block_lane[1]);
 
         cur_crypted = (uint8_t *)(out + array_idx);
-        ((uint64_t *)(cur_crypted + (WORDS * 0)))[0] = out_block_lane[0][0];
-        ((uint64_t *)(cur_crypted + (WORDS * 1)))[0] = out_block_lane[1][0];
+        ((uint64_t *)(cur_crypted + (WORDS * 0)))[0] = out_blocks[0][0];
+        ((uint64_t *)(cur_crypted + (WORDS * 1)))[0] = out_blocks[1][0];
 
-        ((uint64_t *)(cur_crypted + (WORDS * 2)))[0] = out_block_lane[0][1];
-        ((uint64_t *)(cur_crypted + (WORDS * 3)))[0] = out_block_lane[1][1];
+        ((uint64_t *)(cur_crypted + (WORDS * 2)))[0] = out_blocks[0][1];
+        ((uint64_t *)(cur_crypted + (WORDS * 3)))[0] = out_blocks[1][1];
 
-        ((uint64_t *)(cur_crypted + (WORDS * 4)))[0] = out_block_lane[0][2];
-        ((uint64_t *)(cur_crypted + (WORDS * 5)))[0] = out_block_lane[1][2];
+        ((uint64_t *)(cur_crypted + (WORDS * 4)))[0] = out_blocks[0][2];
+        ((uint64_t *)(cur_crypted + (WORDS * 5)))[0] = out_blocks[1][2];
     }
     if (remain == 2) {
         __m256i crypted_iv_block_lane[2];
@@ -133,15 +133,15 @@ int speck_ctr_encrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out, int len
         out_block_lane[0] = _mm256_xor_si256(crypted_iv_block_lane[0], in_block_lane[0]);
         out_block_lane[1] = _mm256_xor_si256(crypted_iv_block_lane[1], in_block_lane[1]);
 
-        _mm256_storeu_si256((__m256i *)&out_blocks[0], crypted_iv_block_lane[0]);
-        _mm256_storeu_si256((__m256i *)&out_blocks[1], crypted_iv_block_lane[1]);
+        _mm256_storeu_si256((__m256i *)&out_blocks[0], out_block_lane[0]);
+        _mm256_storeu_si256((__m256i *)&out_blocks[1], out_block_lane[1]);
 
         cur_crypted = (uint8_t *)(out + array_idx);
-        ((uint64_t *)(cur_crypted + (WORDS * 0)))[0] = out_block_lane[0][0];
-        ((uint64_t *)(cur_crypted + (WORDS * 1)))[0] = out_block_lane[1][0];
+        ((uint64_t *)(cur_crypted + (WORDS * 0)))[0] = out_blocks[0][0];
+        ((uint64_t *)(cur_crypted + (WORDS * 1)))[0] = out_blocks[1][0];
 
-        ((uint64_t *)(cur_crypted + (WORDS * 2)))[0] = out_block_lane[0][1];
-        ((uint64_t *)(cur_crypted + (WORDS * 3)))[0] = out_block_lane[1][1];
+        ((uint64_t *)(cur_crypted + (WORDS * 2)))[0] = out_blocks[0][1];
+        ((uint64_t *)(cur_crypted + (WORDS * 3)))[0] = out_blocks[1][1];
     }
     if (remain == 1) {
         uint64_t in_block[2];
