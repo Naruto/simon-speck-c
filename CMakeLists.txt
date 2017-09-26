@@ -119,16 +119,16 @@ endif()
 # Intel AVX2
 if(ENABLE_AVX2)
     if(MSVC)
-        set(avx2_flags "/arch:AVX2")
+      set(avx2_flags "/arch:AVX2")
     else()
-        set(avx2_flags "-mavx2")
+      set(avx2_flags "-mavx2")
     endif()
-    try_compile(AVX_FOUND "${CMAKE_CURRENT_BINARY_DIR}" "${CMAKE_SOURCE_DIR}/cmake/checks/cpu_avx2.c"
-            COMPILE_DEFINITIONS "${avx2_flags}")
+    try_run(AVX_RUN AVX_FOUND "${CMAKE_CURRENT_BINARY_DIR}" "${CMAKE_SOURCE_DIR}/cmake/checks/cpu_avx2.c"
+      COMPILE_DEFINITIONS "${avx2_flags}")
 
-    if(AVX_FOUND)
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${avx2_flags}")
-        set(WITH_AVX2 ON)
+    if(AVX_FOUND AND (AVX_RUN EQUAL 0))
+      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${avx2_flags}")
+      set(WITH_AVX2 ON)
     endif()
 endif()
 
