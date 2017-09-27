@@ -31,7 +31,7 @@ int speck_ctr_encrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out, int len
     if (len % BLOCK_SIZE != 0) {
         return -1;
     }
-    if(iv_len != BLOCK_SIZE) {
+    if (iv_len != BLOCK_SIZE) {
         return -1;
     }
 
@@ -50,7 +50,7 @@ int speck_ctr_encrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out, int len
         uint64_t iv_blocks[2][LANE_NUM];
         uint64_t out_blocks[2][LANE_NUM];
 
-        for(int j=0; j<LANE_NUM; j++) {
+        for (int j = 0; j < LANE_NUM; j++) {
             iv_blocks[0][j] = *((uint64_t *)(iv + (WORDS * 0)));
             iv_blocks[1][j] = *((uint64_t *)(iv + (WORDS * 1)));
             ctr128_inc(iv);
@@ -94,7 +94,7 @@ int speck_ctr_encrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out, int len
         uint64_t iv_blocks[2][LANE_NUM];
         uint64_t out_blocks[2][LANE_NUM];
 
-        for(int j=0; j<3; j++) {
+        for (int j = 0; j < 3; j++) {
             iv_blocks[0][j] = *((uint64_t *)(iv + (WORDS * 0)));
             iv_blocks[1][j] = *((uint64_t *)(iv + (WORDS * 1)));
             ctr128_inc(iv);
@@ -135,7 +135,7 @@ int speck_ctr_encrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out, int len
         uint64_t iv_blocks[2][LANE_NUM];
         uint64_t out_blocks[2][LANE_NUM];
 
-        for(int j=0; j<2; j++) {
+        for (int j = 0; j < 2; j++) {
             iv_blocks[0][j] = *((uint64_t *)(iv + (WORDS * 0)));
             iv_blocks[1][j] = *((uint64_t *)(iv + (WORDS * 1)));
             ctr128_inc(iv);
@@ -189,6 +189,4 @@ int speck_ctr_encrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out, int len
     return 0;
 }
 
-int speck_ctr_decrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out, int len, uint8_t *iv, int iv_len) {
-    return speck_ctr_encrypt(ctx, in, out, len, iv, iv_len);
-}
+int speck_ctr_decrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out, int len, uint8_t *iv, int iv_len) { return speck_ctr_encrypt(ctx, in, out, len, iv, iv_len); }

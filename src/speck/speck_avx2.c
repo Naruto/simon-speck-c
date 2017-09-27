@@ -24,7 +24,6 @@
 #include <stdlib.h>
 #include "speck_avx2_private.h"
 
-
 void speck_encrypt(speck_ctx_t *ctx, const uint64_t plaintext[2], uint64_t ciphertext[2]) {
     ciphertext[0] = plaintext[0];
     ciphertext[1] = plaintext[1];
@@ -261,13 +260,9 @@ int speck_decrypt_ex(speck_ctx_t *ctx, const uint8_t *crypted, uint8_t *decrypte
     return 0;
 }
 
-int speck_ecb_encrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out, int len) {
-    return speck_encrypt_ex(ctx, in, out, len);
-}
+int speck_ecb_encrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out, int len) { return speck_encrypt_ex(ctx, in, out, len); }
 
-int speck_ecb_decrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out, int len) {
-    return speck_decrypt_ex(ctx, in, out, len);
-}
+int speck_ecb_decrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out, int len) { return speck_decrypt_ex(ctx, in, out, len); }
 
 speck_ctx_t *speck_init(enum speck_encrypt_type type, const uint8_t *key, int key_len) {
     if (key == NULL) return NULL;

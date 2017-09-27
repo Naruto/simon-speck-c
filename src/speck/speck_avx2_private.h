@@ -90,5 +90,4 @@ static inline void speck_decrypt_x4_inline(speck_ctx_t *ctx, __m256i *decrypted)
     }
 }
 
-
 #endif /* __SPECK_PRIVATE_AVX2_H__ */
