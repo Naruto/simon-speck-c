@@ -7,6 +7,7 @@ env:
 matrix:
   include:
     - os: osx
+      osx_image: xcode9
     - os: linux
       before_install:
         - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
@@ -18,14 +19,20 @@ matrix:
             - g++-aarch64-linux-gnu
             - gcc-arm-linux-gnueabi
             - g++-arm-linux-gnueabi
+            # - gcc-mips-linux-gnu
+            # - g++-mips-linux-gnu
+            - gcc-powerpc-linux-gnu
+            - g++-powerpc-linux-gnu
             - qemu-user-static
             - qemu-system-arm
+            # - qemu-system-mips
+            - qemu-system-ppc
         coverity_scan:
           project:
             name: "Naruto/simon_speck"
             description: "<Your project description here>"
           notification_email: tnaruto@gmail.com
-          build_command_prepend: "rm -rf build && mkdir -p build && cd build && cmake .."
+          build_command_prepend: "rm -rf build && mkdir -p build && cd build && cmake -DENABLE_TESTING=ON .."
           build_command: "make -j4"
           branch_pattern: develop
 
@@ -55,6 +62,8 @@ script:
       ./scripts/speck/build_linux.sh
       ./scripts/speck/build_linux_arm.sh
       ./scripts/speck/build_linux_aarch64.sh
+      # ./scripts/speck/build_linux_mips.sh
+      ./scripts/speck/build_linux_powerpc.sh
     fi
   - |
     if [[ "${COVERITY_SCAN_BRANCH}" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
