@@ -22,9 +22,8 @@
 
 #include <speck/speck.h>
 #include <stdlib.h>
-#include "speck_neon_private.h"
 #include "speck_ctr_private.h"
-
+#include "speck_neon_private.h"
 
 #define LANE_NUM 2
 
@@ -32,7 +31,7 @@ int speck_ctr_encrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out, int len
     if (len % BLOCK_SIZE != 0) {
         return -1;
     }
-    if(iv_len != BLOCK_SIZE) {
+    if (iv_len != BLOCK_SIZE) {
         return -1;
     }
 
@@ -51,7 +50,7 @@ int speck_ctr_encrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out, int len
         uint64x1_t iv_blocks[2][LANE_NUM];
         uint64_t out_blocks[2][LANE_NUM];
 
-        for(int j=0; j<LANE_NUM; j++) {
+        for (int j = 0; j < LANE_NUM; j++) {
             iv_blocks[0][j] = vreinterpret_u64_u8(vld1_u8(iv + (WORDS * 0)));
             iv_blocks[1][j] = vreinterpret_u64_u8(vld1_u8(iv + (WORDS * 1)));
             ctr128_inc(iv);
@@ -76,7 +75,7 @@ int speck_ctr_encrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out, int len
         vst1_u8(cur_crypted + (WORDS * 2), vreinterpret_u8_u64(vget_high_u64(out_block_lane[0])));
         vst1_u8(cur_crypted + (WORDS * 3), vreinterpret_u8_u64(vget_high_u64(out_block_lane[1])));
     }
-    if(remain == 1) {
+    if (remain == 1) {
         uint64x1_t in_block[2];
         uint64x1_t crypted_block[2];
         uint64x1_t out_block[2];
@@ -104,6 +103,4 @@ int speck_ctr_encrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out, int len
     return 0;
 }
 
-int speck_ctr_decrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out, int len, uint8_t *iv, int iv_len) {
-    return speck_ctr_encrypt(ctx, in, out, len, iv, iv_len);
-}
+int speck_ctr_decrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out, int len, uint8_t *iv, int iv_len) { return speck_ctr_encrypt(ctx, in, out, len, iv, iv_len); }
