@@ -43,17 +43,68 @@ support platforms are linux, iOS, Android ndk, macOS and Windows.
         - x86
         - x86_64(enable AVX2)
 
+# Samples
+
+```C
+#include <speck/speck.h>
+#include <stdio.h>
+#include <string.h>
+#include <cstdlib>
+#include <random>
+
+int main() {
+    uint8_t key[16]; // when use 128/192, key size is 24. when use 128/256, key size is 32.
+    uint8_t original_iv[16];
+    uint8_t plain_text[16];
+    uint8_t crypted_text[16];
+    uint8_t decrypted_text[16];
+
+    // generate key and iv
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis;
+
+    for(int i=0; i<sizeof(key); i++) {
+        key[i] = static_cast<uint8_t>(dis(gen));
+    }
+    for(int i=0; i<sizeof(original_iv); i++) {
+        original_iv[i] = static_cast<uint8_t>(dis(gen));
+    }
+    snprintf(reinterpret_cast<char *>(plain_text), sizeof(plain_text), "hello world!!!!");
+
+    speck_ctx_t *ctx = speck_init(SPECK_ENCRYPT_TYPE_128_128, key, sizeof(key));
+    // ECB test
+    speck_ecb_encrypt(ctx, plain_text, crypted_text, sizeof(plain_text));
+    speck_ecb_decrypt(ctx, crypted_text, decrypted_text, sizeof(crypted_text));
+    printf("speck 128/128 ecb\n");
+    printf("  plain:     %s\n", plain_text);
+    printf("  decrypted: %s\n", decrypted_text);
+
+    // CTR test
+    uint8_t iv[16];
+    memcpy(iv, original_iv, sizeof(iv));
+    speck_ctr_encrypt(ctx, plain_text, crypted_text, sizeof(plain_text), iv, sizeof(iv));
+    memcpy(iv, original_iv, sizeof(iv));
+    speck_ctr_decrypt(ctx, crypted_text, decrypted_text, sizeof(crypted_text), iv, sizeof(iv));
+    printf("speck 128/128 ctr\n");
+    printf("  plain:     %s\n", plain_text);
+    printf("  decrypted: %s\n", decrypted_text);
+}
+```
+
+
 # bindings
 
 - C#
     - [Naruto/simon-speck-net](https://github.com/Naruto/simon-speck-net)
 
-# Requirements
-## common
+# development
+## Requirements
+### common
 
 - cmake 3.7 higher
 
-## platforms
+### platforms
 
 - linux
     - gcc
@@ -64,8 +115,8 @@ support platforms are linux, iOS, Android ndk, macOS and Windows.
 - windows
     - Visual Studio 2015 higher
 
-# build
-## develop build
+## build
+### develop build
 
 on macOS or Linux.
 
@@ -78,8 +129,8 @@ cmake --build . --clean-first
 ctest
 ```
 
-## release build
-### linux
+### release build
+#### linux
 
 ```
 ./scripts/speck/build_linux.sh
@@ -87,7 +138,7 @@ ctest
 
 shared library is outputted to `libs/linux` directory.
 
-### iOS
+#### iOS
 
 ```
 ./scripts/speck/build_ios.sh
@@ -95,7 +146,7 @@ shared library is outputted to `libs/linux` directory.
 
 fat library(simulator, device) is outputted to `libs/ios` directory.
 
-### android
+#### android
 
 ```
 ./scripts/speck/build_android.sh
@@ -103,7 +154,7 @@ fat library(simulator, device) is outputted to `libs/ios` directory.
 
 shared librares of each architectures are outputted to `libs/android`.
 
-### macOS
+#### macOS
 
 ```
 ./scripts/speck/build_mac.sh
@@ -111,7 +162,7 @@ shared librares of each architectures are outputted to `libs/android`.
 
 bundle file is outputted to `libs/mac` directory.
 
-### windows
+#### windows
 
 ```
 scripts\speck\build_win.bat
