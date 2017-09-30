@@ -271,17 +271,36 @@ speck_ctx_t *speck_init(enum speck_encrypt_type type, const uint8_t *key, int ke
     speck_ctx_t *ctx = (speck_ctx_t *)calloc(1, sizeof(speck_ctx_t));
     if (!ctx) return NULL;
     ctx->type = type;
+    ctx->round = get_round_num(type);
+
+    ctx->key_schedule = calloc(1, ctx->round * sizeof(uint64_t));
+    if (!ctx->key_schedule) return NULL;
 
     // calc key schedule
     uint64_t b;
     uint64_t a;
-    cast_uint8_array_to_uint64(&b, key + 0);
-    cast_uint8_array_to_uint64(&a, key + 8);
-    ctx->key_schedule[0] = b;
-    for (unsigned i = 0; i < ROUNDS - 1; i++) {
-        uint64_t k = i;
+    uint64_t k;
+    int key_words_num = get_key_words_num(ctx->type);
+    uint64_t keys[MAX_KEY_WORDS];
+    for (int i = 0; i < key_words_num; i++) {
+        cast_uint8_array_to_uint64(&keys[i], key + (WORDS * i));
+    }
+    ctx->key_schedule[0] = keys[0];
+    for (int i = 0; i < ctx->round - 1; i++) {
+        b = keys[0];
+        a = keys[1];
+        k = (uint64_t)i;
         speck_round_x1(&a, &b, &k);
-        ctx->key_schedule[i + 1] = b;
+        keys[0] = b;
+
+        if (key_words_num != 2) {
+            for (int j = 1; j < (key_words_num - 1); j++) {
+                keys[j] = keys[j + 1];
+            }
+        }
+        keys[key_words_num - 1] = a;
+
+        ctx->key_schedule[i + 1] = keys[0];
     }
 
     return ctx;
@@ -289,5 +308,6 @@ speck_ctx_t *speck_init(enum speck_encrypt_type type, const uint8_t *key, int ke
 
 void speck_finish(speck_ctx_t **ctx) {
     if (!ctx) return;
+    free((*ctx)->key_schedule);
     free(*ctx);
 }

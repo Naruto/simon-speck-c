@@ -24,9 +24,64 @@
 #include "speck_private.h"
 
 int is_validate_key_len(enum speck_encrypt_type type, int key_len) {
-    if (type == SPECK_ENCRYPT_TYPE_128_128) {
-        return (key_len == (128 / 8));
+    int ret;
+
+    switch (type) {
+        case SPECK_ENCRYPT_TYPE_128_128:
+            ret = (key_len == (128 / 8));
+            break;
+        case SPECK_ENCRYPT_TYPE_128_192:
+            ret = (key_len == (192 / 8));
+            break;
+        case SPECK_ENCRYPT_TYPE_128_256:
+            ret = (key_len == (256 / 8));
+            break;
+        default:
+            ret = -1;
+            break;
     }
 
-    return -1;
+    return ret;
+}
+
+int get_round_num(enum speck_encrypt_type type) {
+    int ret;
+
+    switch (type) {
+        case SPECK_ENCRYPT_TYPE_128_128:
+            ret = 32;
+            break;
+        case SPECK_ENCRYPT_TYPE_128_192:
+            ret = 33;
+            break;
+        case SPECK_ENCRYPT_TYPE_128_256:
+            ret = 34;
+            break;
+        default:
+            ret = -1;
+            break;
+    }
+
+    return ret;
+}
+
+int get_key_words_num(enum speck_encrypt_type type) {
+    int ret;
+
+    switch (type) {
+        case SPECK_ENCRYPT_TYPE_128_128:
+            ret = 2;
+            break;
+        case SPECK_ENCRYPT_TYPE_128_192:
+            ret = 3;
+            break;
+        case SPECK_ENCRYPT_TYPE_128_256:
+            ret = 4;
+            break;
+        default:
+            ret = -1;
+            break;
+    }
+
+    return ret;
 }

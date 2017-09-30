@@ -160,16 +160,37 @@ speck_ctx_t *speck_init(enum speck_encrypt_type type, const uint8_t *key, int ke
     speck_ctx_t *ctx = (speck_ctx_t *)calloc(1, sizeof(speck_ctx_t));
     if (!ctx) return NULL;
     ctx->type = type;
+    ctx->round = get_round_num(type);
+
+    ctx->key_schedule = calloc(1, ctx->round * sizeof(uint64_t));
+    if (!ctx->key_schedule) return NULL;
 
     // calc key schedule
-    uint64x1_t b = vreinterpret_u64_u8(vld1_u8(key));      //= key[0];
-    uint64x1_t a = vreinterpret_u64_u8(vld1_u8(key + 8));  //= key[1];
-    vst1_u64(&ctx->key_schedule[0], b);
-    for (unsigned i = 0; i < ROUNDS - 1; i++) {
-        uint64_t idx = (uint64_t)i;
-        uint64x1_t vidx = vld1_u64(&idx);
-        speck_round_x1(&a, &b, &vidx);
-        vst1_u64(&ctx->key_schedule[i + 1], b);
+    uint64x1_t b;
+    uint64x1_t a;
+    int key_words_num = get_key_words_num(ctx->type);
+    uint64x1_t keys[MAX_KEY_WORDS];
+    for (int i = 0; i < key_words_num; i++) {
+        keys[i] = vreinterpret_u64_u8(vld1_u8(key + (WORDS * i)));
+    }
+    vst1_u64(&ctx->key_schedule[0], keys[0]);
+    for (int i = 0; i < ctx->round - 1; i++) {
+        b = keys[0];
+        a = keys[1];
+        uint64_t k = (uint64_t)i;
+        uint64x1_t vk = vld1_u64(&k);
+
+        speck_round_x1(&a, &b, &vk);
+        keys[0] = b;
+
+        if (key_words_num != 2) {
+            for (int j = 1; j < (key_words_num - 1); j++) {
+                keys[j] = keys[j + 1];
+            }
+        }
+        keys[key_words_num - 1] = a;
+
+        vst1_u64(&ctx->key_schedule[i + 1], keys[0]);
     }
 
     return ctx;
@@ -177,5 +198,6 @@ speck_ctx_t *speck_init(enum speck_encrypt_type type, const uint8_t *key, int ke
 
 void speck_finish(speck_ctx_t **ctx) {
     if (!ctx) return;
+    free((*ctx)->key_schedule);
     free(*ctx);
 }

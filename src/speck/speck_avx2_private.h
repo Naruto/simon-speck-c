@@ -63,28 +63,28 @@ static inline void speck_back_x4(__m256i *x, __m256i *y, const __m256i *k) {
 }
 
 static inline void speck_encrypt_x1_inline(speck_ctx_t *ctx, uint64_t *ciphertext) {
-    for (unsigned i = 0; i < ROUNDS; i++) {
+    for (int i = 0; i < ctx->round; i++) {
         uint64_t key = ctx->key_schedule[i];
         speck_round_x1(&ciphertext[1], &ciphertext[0], &key);
     }
 }
 
 static inline void speck_decrypt_x1_inline(speck_ctx_t *ctx, uint64_t *decrypted) {
-    for (unsigned i = ROUNDS; i > 0; i--) {
+    for (int i = ctx->round; i > 0; i--) {
         uint64_t key = ctx->key_schedule[i - 1];
         speck_back_x1(&decrypted[1], &decrypted[0], &key);
     }
 }
 
 static inline void speck_encrypt_x4_inline(speck_ctx_t *ctx, __m256i *ciphertext) {
-    for (unsigned i = 0; i < ROUNDS; i++) {
+    for (int i = 0; i < ctx->round; i++) {
         __m256i key = _mm256_set1_epi64x(ctx->key_schedule[i]);
         speck_round_x4(&ciphertext[1], &ciphertext[0], &key);
     }
 }
 
 static inline void speck_decrypt_x4_inline(speck_ctx_t *ctx, __m256i *decrypted) {
-    for (unsigned i = ROUNDS; i > 0; i--) {
+    for (int i = ctx->round; i > 0; i--) {
         __m256i key = _mm256_set1_epi64x(ctx->key_schedule[i - 1]);
         speck_back_x4(&decrypted[1], &decrypted[0], &key);
     }
