@@ -56,6 +56,16 @@ static const uint8_t s_cipher_128192_text_stream[16] = {
         0x86, 0x18, 0x3c, 0xe0, 0x5d, 0x18, 0xbc, 0xf9, 0x66, 0x55, 0x13, 0x13, 0x3a, 0xcf, 0xe4, 0x1b,
 };
 
+static const uint8_t s_key_128256_stream[32] = {
+        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
+};
+static const uint8_t s_plain_128256_text_stream[16] = {
+        0x70, 0x6f, 0x6f, 0x6e, 0x65, 0x72, 0x2e, 0x20, 0x49, 0x6e, 0x20, 0x74, 0x68, 0x6f, 0x73, 0x65,
+};
+static const uint8_t s_cipher_128256_text_stream[16] = {
+        0x43, 0x8f, 0x18, 0x9c, 0x8d, 0xb4, 0xee, 0x4e, 0x3e, 0xf5, 0xc0, 0x05, 0x04, 0x01, 0x09, 0x41,
+};
+
 void generate_iv(uint8_t *iv, size_t iv_len) {
     std::random_device rd;  //Will be used to obtain a seed for the random number engine
     std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
@@ -75,6 +85,52 @@ void show_array(const char *explain, const uint8_t *array, size_t len) {
 }
 
 int main() {
+
+    // ECB 128256 stream encrypt & decrypt
+    {
+        speck_ctx_t *ctx = speck_init(SPECK_ENCRYPT_TYPE_128_256, s_key_128256_stream, sizeof(s_key_128256_stream));
+        if(!ctx) return 1;
+
+        int i;
+        size_t siz = 16;
+        uint8_t *plain_text = (uint8_t*) calloc(1, siz);
+        uint8_t *crypted_text = (uint8_t*) calloc(1, siz);
+        uint8_t *decrypted_text = (uint8_t*) calloc(1, siz);
+
+        memcpy(plain_text, s_plain_128256_text_stream, sizeof(s_plain_128256_text_stream));
+
+        printf("ECB stream ph1\n");
+
+        show_array("plain text :", plain_text, siz);
+
+        speck_ecb_encrypt(ctx, plain_text, crypted_text, siz);
+        show_array("encrypted text :", crypted_text, siz);
+        // check
+        for (int i = 0; i < siz; i++) {
+            if (s_cipher_128256_text_stream[i] != crypted_text[i]) {
+                printf("encrypted error idx:%d  0x%02x != 0x%02x\n", i, s_cipher_128256_text_stream[i], crypted_text[i]);
+                return 1;
+            }
+        }
+
+        speck_ecb_decrypt(ctx, crypted_text, decrypted_text, siz);
+        show_array("decrypted text :", decrypted_text, siz);
+
+        // check
+        for (int i = 0; i < siz; i++) {
+            if (s_plain_128256_text_stream[i] != decrypted_text[i]) {
+                printf("decrypted error idx:%d  0x%02x != 0x%02x\n", i, s_plain_128256_text_stream[i], decrypted_text[i]);
+                return 1;
+            }
+        }
+        printf("\n");
+
+        free(decrypted_text);
+        free(crypted_text);
+        free(plain_text);
+
+        speck_finish(&ctx);
+    }
 
     // ECB 128192 stream encrypt & decrypt
     {
