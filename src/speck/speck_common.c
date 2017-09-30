@@ -26,7 +26,7 @@
 int is_validate_key_len(enum speck_encrypt_type type, int key_len) {
     int ret;
 
-    switch(type) {
+    switch (type) {
         case SPECK_ENCRYPT_TYPE_128_128:
             ret = (key_len == (128 / 8));
             break;
@@ -47,7 +47,7 @@ int is_validate_key_len(enum speck_encrypt_type type, int key_len) {
 int get_round_num(enum speck_encrypt_type type) {
     int ret;
 
-    switch(type) {
+    switch (type) {
         case SPECK_ENCRYPT_TYPE_128_128:
             ret = 32;
             break;
@@ -68,7 +68,7 @@ int get_round_num(enum speck_encrypt_type type) {
 int get_key_words_num(enum speck_encrypt_type type) {
     int ret;
 
-    switch(type) {
+    switch (type) {
         case SPECK_ENCRYPT_TYPE_128_128:
             ret = 2;
             break;
