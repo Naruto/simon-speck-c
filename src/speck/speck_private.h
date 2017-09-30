@@ -30,7 +30,8 @@
 #define BLOCK_SIZE (WORDS * 2)
 
 struct speck_ctx_t_ {
-    uint64_t key_schedule[ROUNDS];
+    int round;
+    uint64_t *key_schedule;
     enum speck_encrypt_type type;
 };
 
@@ -52,5 +53,7 @@ static inline void cast_uint64_to_uint8_array(uint8_t *dst, uint64_t src) {
 }
 
 int is_validate_key_len(enum speck_encrypt_type type, int key_len);
+int get_round_num(enum speck_encrypt_type type);
+int get_key_words_num(enum speck_encrypt_type type);
 
 #endif /* __SPECK_PRIVATE_H__ */
