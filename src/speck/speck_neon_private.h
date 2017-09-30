@@ -63,21 +63,21 @@ static inline void speck_back_x2(uint64x2_t *x, uint64x2_t *y, const uint64x2_t 
 }
 
 static inline void speck_encrypt_x1_inline(speck_ctx_t *ctx, uint64x1_t *ciphertext) {
-    for (unsigned i = 0; i < ROUNDS; i++) {
+    for (int i = 0; i < ctx->round; i++) {
         uint64x1_t key = vld1_u64(&ctx->key_schedule[i]);
         speck_round_x1(&ciphertext[1], &ciphertext[0], &key);
     }
 }
 
 static inline void speck_decrypt_x1_inline(speck_ctx_t *ctx, uint64x1_t *decrypted) {
-    for (unsigned i = ROUNDS; i > 0; i--) {
+    for (int i = ctx->round; i > 0; i--) {
         uint64x1_t key = vld1_u64(&ctx->key_schedule[i - 1]);
         speck_back_x1(&decrypted[1], &decrypted[0], &key);
     }
 }
 
 static inline void speck_encrypt_x2_inline(speck_ctx_t *ctx, uint64x2_t *ciphertext) {
-    for (unsigned i = 0; i < ROUNDS; i++) {
+    for (int i = 0; i < ctx->round; i++) {
         uint64x1_t key_item = vld1_u64(&ctx->key_schedule[i]);
         uint64x2_t key = vcombine_u64(key_item, key_item);
         speck_round_x2(&ciphertext[1], &ciphertext[0], &key);
@@ -85,7 +85,7 @@ static inline void speck_encrypt_x2_inline(speck_ctx_t *ctx, uint64x2_t *ciphert
 }
 
 static inline void speck_decrypt_x2_inline(speck_ctx_t *ctx, uint64x2_t *decrypted) {
-    for (unsigned i = ROUNDS; i > 0; i--) {
+    for (int i = ctx->round; i > 0; i--) {
         uint64x1_t key_item = vld1_u64(&ctx->key_schedule[i - 1]);
         uint64x2_t key = vcombine_u64(key_item, key_item);
         speck_back_x2(&decrypted[1], &decrypted[0], &key);
