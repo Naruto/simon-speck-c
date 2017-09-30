@@ -28,6 +28,7 @@
 #define ROUNDS 32
 #define WORDS 8
 #define BLOCK_SIZE (WORDS * 2)
+#define MAX_KEY_WORDS 4
 
 struct speck_ctx_t_ {
     int round;
