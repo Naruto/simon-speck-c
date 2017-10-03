@@ -51,7 +51,7 @@ static void cast_uint8_array_to_uint64_len(uint64_t *dst, const uint8_t *array, 
 
 static inline void cast_uint64_to_uint8_array_len(uint8_t *dst, uint64_t src, int len) {
     for(int i=0; i<len; i++) {
-        dst[i] = (uint8_t)((src & (0x00000000000000ffL << (8 * i)) ) >> (8 *  i));
+        dst[i] = (uint8_t)((src & (0x00000000000000ffULL << (8 * i)) ) >> (8 *  i));
     }
 }
 

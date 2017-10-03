@@ -43,14 +43,14 @@ static inline void cast_uint8_array_to_uint64(uint64_t *dst, const uint8_t *arra
 
 static inline void cast_uint64_to_uint8_array(uint8_t *dst, uint64_t src) {
     // TODO: byte order
-    dst[0] = (uint8_t)(src & 0x00000000000000ff);
-    dst[1] = (uint8_t)((src & 0x000000000000ff00) >> 8);
-    dst[2] = (uint8_t)((src & 0x0000000000ff0000) >> 16);
-    dst[3] = (uint8_t)((src & 0x00000000ff000000) >> 24);
-    dst[4] = (uint8_t)((src & 0x000000ff00000000) >> 32);
-    dst[5] = (uint8_t)((src & 0x0000ff0000000000) >> 40);
-    dst[6] = (uint8_t)((src & 0x00ff000000000000) >> 48);
-    dst[7] = (uint8_t)((src & 0xff00000000000000) >> 56);
+    dst[0] = (uint8_t)(src & 0x00000000000000ffULL);
+    dst[1] = (uint8_t)((src & 0x000000000000ff00ULL) >> 8);
+    dst[2] = (uint8_t)((src & 0x0000000000ff0000ULL) >> 16);
+    dst[3] = (uint8_t)((src & 0x00000000ff000000ULL) >> 24);
+    dst[4] = (uint8_t)((src & 0x000000ff00000000ULL) >> 32);
+    dst[5] = (uint8_t)((src & 0x0000ff0000000000ULL) >> 40);
+    dst[6] = (uint8_t)((src & 0x00ff000000000000ULL) >> 48);
+    dst[7] = (uint8_t)((src & 0xff00000000000000ULL) >> 56);
 }
 
 int is_validate_key_len(enum speck_encrypt_type type, int key_len);
