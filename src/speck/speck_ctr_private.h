@@ -40,4 +40,20 @@ static inline uint8_t *ctr128_inc(uint8_t counter[16]) {
     return counter;
 }
 
+static void cast_uint8_array_to_uint64_len(uint64_t *dst, const uint8_t *array, int len) {
+    uint8_t tmp[8] = {0};
+    int i;
+    for(i=0; i<len; i++) {
+        tmp[i] = array[i];
+    }
+    *dst =  (uint64_t)tmp[7] << 56 | (uint64_t)tmp[6] << 48 | (uint64_t)tmp[5] << 40 | (uint64_t)tmp[4] << 32 | (uint64_t)tmp[3] << 24 | (uint64_t)tmp[2] << 16 | (uint64_t)tmp[1] <<  8 | (uint64_t)tmp[0];
+}
+
+static inline void cast_uint64_to_uint8_array_len(uint8_t *dst, uint64_t src, int len) {
+    for(int i=0; i<len; i++) {
+        dst[i] = (uint8_t)((src & (0x00000000000000ffL << (8 * i)) ) >> (8 *  i));
+    }
+}
+
+
 #endif /* __SPECK_CTR_H__ */
