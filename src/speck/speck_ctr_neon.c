@@ -28,13 +28,14 @@
 #define LANE_NUM 2
 
 int speck_ctr_encrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out, int len, uint8_t *iv, int iv_len) {
-    if (len % BLOCK_SIZE != 0) {
+    if (len < 0) {
         return -1;
     }
     if (iv_len != BLOCK_SIZE) {
         return -1;
     }
 
+    int remain_bytes = len % BLOCK_SIZE;
     int count = len / (BLOCK_SIZE * LANE_NUM);
     int remain = (len % (BLOCK_SIZE * LANE_NUM)) / BLOCK_SIZE;
 
@@ -98,6 +99,42 @@ int speck_ctr_encrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out, int len
         cur_crypted = (uint8_t *)(out + array_idx);
         vst1_u8(cur_crypted + (WORDS * 0), vreinterpret_u8_u64(out_block[0]));
         vst1_u8(cur_crypted + (WORDS * 1), vreinterpret_u8_u64(out_block[1]));
+    }
+    if (remain_bytes != 0) {
+        uint64x1_t in_block[2];
+        uint64x1_t crypted_block[2];
+        uint64x1_t out_block[2];
+        uint64_t tmp_block;
+
+        crypted_block[0] = vreinterpret_u64_u8(vld1_u8(iv + (WORDS * 0)));
+        crypted_block[1] = vreinterpret_u64_u8(vld1_u8(iv + (WORDS * 1)));
+        ctr128_inc(iv);
+
+        speck_encrypt_x1_inline(ctx, crypted_block);
+
+        array_idx = (i * (BLOCK_SIZE * LANE_NUM)) + (remain * BLOCK_SIZE);
+
+        cur_plain = (uint8_t *)(in + array_idx);
+        cur_crypted = (uint8_t *)(out + array_idx);
+        if (remain_bytes > WORDS) {
+            in_block[0] = vreinterpret_u64_u8(vld1_u8(cur_plain + (WORDS * 0)));
+            cast_uint8_array_to_uint64_len(&tmp_block, cur_plain + (WORDS * 1), remain_bytes - WORDS);
+            in_block[1] = vld1_u64(&tmp_block);
+
+            out_block[0] = veor_u64(crypted_block[0], in_block[0]);
+            out_block[1] = veor_u64(crypted_block[1], in_block[1]);
+
+            vst1_u8(cur_crypted + (WORDS * 0), vreinterpret_u8_u64(out_block[0]));
+            vst1_u64(&tmp_block, out_block[1]);
+            cast_uint64_to_uint8_array_len(cur_crypted + (WORDS * 1), tmp_block, remain_bytes - WORDS);
+        } else {
+            cast_uint8_array_to_uint64_len(&tmp_block, cur_plain + (WORDS * 0), remain_bytes);
+            in_block[0] = vld1_u64(&tmp_block);
+
+            out_block[0] = veor_u64(crypted_block[0], in_block[0]);
+            vst1_u64(&tmp_block, out_block[0]);
+            cast_uint64_to_uint8_array_len(cur_crypted + (WORDS * 0), tmp_block, remain_bytes);
+        }
     }
 
     return 0;
