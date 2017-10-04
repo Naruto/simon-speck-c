@@ -152,28 +152,29 @@ int encrypt_decrypt_random_stream_test(int block_num) {
     int r = 0;
     speck_ctx_t *ctx = NULL;
     uint8_t *key_text_stream = NULL;
+    int key_text_length = sizeof(s_key_stream);
     uint8_t *plain_text_stream = NULL;
     uint8_t *crypted_text_stream = NULL;
     uint8_t *decrypted_text_stream = NULL;
     uint8_t *iv_text_stream = NULL;
     uint8_t *origin_iv_text_stream = NULL;
 
-    key_text_stream = (uint8_t*)malloc(BLOCK_SIZE);
+    key_text_stream = (uint8_t*)malloc(key_text_length);
     if(!key_text_stream) {
         r = 1;
         goto finish;
     }
-    plain_text_stream = (uint8_t*)malloc(BLOCK_SIZE * block_num);
+    plain_text_stream = (uint8_t*)malloc(block_num);
     if (!plain_text_stream) {
         r = 1;
         goto finish;
     }
-    crypted_text_stream = (uint8_t*)malloc(BLOCK_SIZE * block_num);
+    crypted_text_stream = (uint8_t*)malloc(block_num);
     if (!crypted_text_stream) {
         r = 1;
         goto finish;
     }
-    decrypted_text_stream = (uint8_t*)malloc(BLOCK_SIZE * block_num);
+    decrypted_text_stream = (uint8_t*)malloc(block_num);
     if (!decrypted_text_stream) {
         r = 1;
         goto finish;
@@ -189,8 +190,8 @@ int encrypt_decrypt_random_stream_test(int block_num) {
         goto finish;
     }
 
-    generate_random_array(key_text_stream, BLOCK_SIZE);
-    generate_random_array(plain_text_stream, BLOCK_SIZE * block_num);
+    generate_random_array(key_text_stream, key_text_length);
+    generate_random_array(plain_text_stream, block_num);
     generate_random_array(origin_iv_text_stream, BLOCK_SIZE);
 
     ctx = speck_init(SPECK_ENCRYPT_TYPE_128_128, key_text_stream, BLOCK_SIZE);
@@ -199,23 +200,23 @@ int encrypt_decrypt_random_stream_test(int block_num) {
         goto finish;
     }
     memcpy(iv_text_stream, origin_iv_text_stream, BLOCK_SIZE);
-    r = speck_ctr_encrypt(ctx, plain_text_stream, crypted_text_stream, BLOCK_SIZE * block_num, iv_text_stream, BLOCK_SIZE);
+    r = speck_ctr_encrypt(ctx, plain_text_stream, crypted_text_stream, block_num, iv_text_stream, BLOCK_SIZE);
     if (r < 0) {
         r = 1;
         goto finish;
     }
     memcpy(iv_text_stream, origin_iv_text_stream, BLOCK_SIZE);
-    r = speck_ctr_decrypt(ctx, crypted_text_stream, decrypted_text_stream, BLOCK_SIZE * block_num, iv_text_stream, BLOCK_SIZE);
+    r = speck_ctr_decrypt(ctx, crypted_text_stream, decrypted_text_stream, block_num, iv_text_stream, BLOCK_SIZE);
     if (r < 0) {
         r = 1;
         goto finish;
     }
-    for (int i = 0; i < BLOCK_SIZE * block_num; i++) {
+    for (int i = 0; i < block_num; i++) {
         if (plain_text_stream[i] != decrypted_text_stream[i]) {
             printf("block_num:%d idx:%d  0x%02x != 0x%02x\n", block_num, i, plain_text_stream[i], decrypted_text_stream[i]);
             show_array("iv", origin_iv_text_stream, BLOCK_SIZE);
-            show_array("plain", plain_text_stream, block_num * BLOCK_SIZE);
-            show_array("decrypted", decrypted_text_stream, block_num * BLOCK_SIZE);
+            show_array("plain", plain_text_stream, block_num);
+            show_array("decrypted", decrypted_text_stream, block_num);
             show_array("counted iv", iv_text_stream, BLOCK_SIZE);
             printf("\n");
 
@@ -247,7 +248,7 @@ int main() {
     printf("success encrypt_decrypt_stream_test\n");
 
     printf("test encrypt_decrypt_random_stream_test\n");
-    for (int i = 0; i <(4*1024)/BLOCK_SIZE; i++) {
+    for (int i = 0; i <(4*1024); i++) {
         int r = encrypt_decrypt_random_stream_test(i+1);
         if(r != 0) {
             return r;

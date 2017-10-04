@@ -361,7 +361,7 @@ int main() {
 
         printf("CTR stream ph2\n");
 
-        memcpy(plain_text, s_test_text, strlen(s_test_text));
+        memcpy(plain_text, s_test_text, siz);
         generate_iv(iv_text, iv_siz);
 
         show_array("iv text :", iv_text, iv_siz);

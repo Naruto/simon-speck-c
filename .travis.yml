@@ -57,6 +57,7 @@ install:
   - popd
 
 script:
+  - set -e
   - |
     if [[ "${COVERITY_SCAN_BRANCH}" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
       ./scripts/speck/build_linux.sh
