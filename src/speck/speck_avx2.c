@@ -51,27 +51,33 @@ int speck_encrypt_ex(speck_ctx_t *ctx, const uint8_t *plain, uint8_t *crypted, i
     uint64_t tmp_low[LANE_NUM];
     uint64_t tmp_high[LANE_NUM];
     for (i = 0; i < len; i++) {
-        __m256i tmp_lane[2];
         __m256i crypted_lane[2];
 
         array_idx = (i * (BLOCK_SIZE * LANE_NUM));
 
         cur_plain = (uint8_t *)(plain + array_idx);
 
-        tmp_lane[0] = _mm256_load_si256((const __m256i*)(cur_plain + WORDS * (LANE_NUM * 0)));
-        tmp_lane[1] = _mm256_load_si256((const __m256i*)(cur_plain + WORDS * (LANE_NUM * 1)));
-        crypted_lane[0] = _mm256_unpacklo_epi64(tmp_lane[0], tmp_lane[1]);
-        crypted_lane[1] = _mm256_unpackhi_epi64(tmp_lane[0], tmp_lane[1]);
+        crypted_lane[0] = _mm256_set_epi64x(*((uint64_t *)(cur_plain + (WORDS * 6))), *((uint64_t *)(cur_plain + (WORDS * 4))), *((uint64_t *)(cur_plain + (WORDS * 2))), *((uint64_t *)(cur_plain + (WORDS * 0))));
+        crypted_lane[1] = _mm256_set_epi64x(*((uint64_t *)(cur_plain + (WORDS * 7))), *((uint64_t *)(cur_plain + (WORDS * 5))), *((uint64_t *)(cur_plain + (WORDS * 3))), *((uint64_t *)(cur_plain + (WORDS * 1))));
 
         speck_encrypt_x4_inline(ctx, crypted_lane);
 
         cur_crypted = (uint8_t *)(crypted + array_idx);
 
-        tmp_lane[0] = _mm256_unpacklo_epi64(crypted_lane[0], crypted_lane[1]);
-        tmp_lane[1] = _mm256_unpackhi_epi64(crypted_lane[0], crypted_lane[1]);
+        _mm256_storeu_si256((__m256i *)tmp_low, crypted_lane[0]);
+        _mm256_storeu_si256((__m256i *)tmp_high, crypted_lane[1]);
 
-        _mm256_storeu_si256((__m256i *)(cur_crypted + WORDS * (LANE_NUM * 0)), tmp_lane[0]);
-        _mm256_storeu_si256((__m256i *)(cur_crypted + WORDS * (LANE_NUM * 1)), tmp_lane[1]);
+        ((uint64_t *)(cur_crypted + (WORDS * 0)))[0] = tmp_low[0];
+        ((uint64_t *)(cur_crypted + (WORDS * 1)))[0] = tmp_high[0];
+
+        ((uint64_t *)(cur_crypted + (WORDS * 2)))[0] = tmp_low[1];
+        ((uint64_t *)(cur_crypted + (WORDS * 3)))[0] = tmp_high[1];
+
+        ((uint64_t *)(cur_crypted + (WORDS * 4)))[0] = tmp_low[2];
+        ((uint64_t *)(cur_crypted + (WORDS * 5)))[0] = tmp_high[2];
+
+        ((uint64_t *)(cur_crypted + (WORDS * 6)))[0] = tmp_low[3];
+        ((uint64_t *)(cur_crypted + (WORDS * 7)))[0] = tmp_high[3];
     }
     if (remain == 3) {
         __m256i crypted_lane[2];
@@ -271,9 +277,9 @@ speck_ctx_t *speck_init(enum speck_encrypt_type type, const uint8_t *key, int ke
     if (!ctx->key_schedule) return NULL;
 
     // calc key schedule
-    __m256i b;
-    __m256i a;
-    __m256i k;
+    uint64_t b;
+    uint64_t a;
+    uint64_t k;
     int key_words_num = get_key_words_num(ctx->type);
     uint64_t keys[MAX_KEY_WORDS];
     for (int i = 0; i < key_words_num; i++) {
@@ -281,20 +287,18 @@ speck_ctx_t *speck_init(enum speck_encrypt_type type, const uint8_t *key, int ke
     }
     ctx->key_schedule[0] = keys[0];
     for (int i = 0; i < ctx->round - 1; i++) {
-        b = _mm256_set_epi64x(0, 0, 0, keys[0]);
-        a = _mm256_set_epi64x(0, 0, 0, keys[1]);
-        k = _mm256_set_epi64x(0, 0, 0, i);
-        speck_round_x4(&a, &b, &k);
-        uint64_t *pB = (uint64_t *)(&b);
-        keys[0] = pB[0];
+        b = keys[0];
+        a = keys[1];
+        k = (uint64_t)i;
+        speck_round_x1(&a, &b, &k);
+        keys[0] = b;
 
         if (key_words_num != 2) {
             for (int j = 1; j < (key_words_num - 1); j++) {
                 keys[j] = keys[j + 1];
             }
         }
-        uint64_t *pA = (uint64_t *)(&a);
-        keys[key_words_num - 1] = pA[0];
+        keys[key_words_num - 1] = a;
 
         ctx->key_schedule[i + 1] = keys[0];
     }
