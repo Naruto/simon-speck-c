@@ -85,6 +85,11 @@ endif()
 #  test_big_endian(WORDS_BIGENDIAN)
 #endif()
 
+if (EMSCRIPTEN)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DEMSCRIPTEN")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DEMSCRIPTEN")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --memory-init-file 0")
+endif()
 
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(CMAKE_CXX_STANDARD 11)

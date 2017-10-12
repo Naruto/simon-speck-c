@@ -170,5 +170,11 @@ scripts\speck\build_win.bat
 
 dll library is outputted to `libs/windows` directory.
 
+## emscripten
+
+```
+./scripts/speck/build_emscripten.sh
+```
+
 # License
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2FNaruto%2Fsimon-speck-c.svg?type=large)](https://app.fossa.io/projects/git%2Bhttps%3A%2F%2Fgithub.com%2FNaruto%2Fsimon-speck-c?ref=badge_large)
