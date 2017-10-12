@@ -47,7 +47,7 @@ static inline void speck_back_x1(uint64_t *x, uint64_t *y, const uint64_t *k) {
 }
 
 static inline void speck_round_x4(__m256i *x, __m256i *y, const __m256i *k) {
-    *x = _mm256_xor_si256(_mm256_srli_epi64(*x, 8), _mm256_slli_epi64(*x, (64 - 8)));  // x = ROTR(x, 8)
+    *x = _mm256_shuffle_epi8(*x, _mm256_set_epi64x(0x080f0e0d0c0b0a09LL,0x0007060504030201LL,0x080f0e0d0c0b0a09LL,0x0007060504030201LL)); // x = ROTR(x, 8)
     *x = _mm256_add_epi64(*x, *y);
     *x = _mm256_xor_si256(*x, *k);
     *y = _mm256_xor_si256(_mm256_slli_epi64(*y, 3), _mm256_srli_epi64(*y, (64 - 3)));  // y = ROTL(y, 3)
@@ -59,7 +59,7 @@ static inline void speck_back_x4(__m256i *x, __m256i *y, const __m256i *k) {
     *y = _mm256_xor_si256(_mm256_srli_epi64(*y, 3), _mm256_slli_epi64(*y, (64 - 3)));  // y = ROTR(y, 3)
     *x = _mm256_xor_si256(*x, *k);
     *x = _mm256_sub_epi64(*x, *y);
-    *x = _mm256_xor_si256(_mm256_slli_epi64(*x, 8), _mm256_srli_epi64(*x, (64 - 8)));  // x = ROTL(x, 8)
+    *x =  _mm256_shuffle_epi8(*x, _mm256_set_epi64x(0x0e0d0c0b0a09080fLL,0x0605040302010007LL,0x0e0d0c0b0a09080fLL,0x0605040302010007LL)); // x = ROTL(x, 8)
 }
 
 static inline void speck_encrypt_x1_inline(speck_ctx_t *ctx, uint64_t *ciphertext) {
