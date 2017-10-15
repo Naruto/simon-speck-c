@@ -2,7 +2,7 @@
 
 // Taken from stackoverflow (see http://stackoverflow.com/questions/3830883/cpu-cycle-count-based-profiling-in-c-c-linux-x86-64)
 // Can give nonsensical results on multi-core AMD processors.
-static uint64_t __attribute__((always_inline)) rdtsc() {
+inline uint64_t __attribute__((always_inline)) rdtsc() {
   uint32_t lo, hi;
   asm volatile (
                 "cpuid \n" /* serializing */
