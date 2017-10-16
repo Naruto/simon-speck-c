@@ -51,17 +51,13 @@ int speck_encrypt_ex(speck_ctx_t *ctx, const uint8_t *plain, uint8_t *crypted, i
     uint64_t tmp_low[LANE_NUM];
     uint64_t tmp_high[LANE_NUM];
     for (i = 0; i < len; i++) {
-        __m256i tmp_lane[2];
         __m256i crypted_lane[2];
 
         array_idx = (i * (BLOCK_SIZE * LANE_NUM));
 
         cur_plain = (uint8_t *)(plain + array_idx);
-
-        tmp_lane[0] = _mm256_load_si256((const __m256i*)(cur_plain + WORDS * (LANE_NUM * 0)));
-        tmp_lane[1] = _mm256_load_si256((const __m256i*)(cur_plain + WORDS * (LANE_NUM * 1)));
-        crypted_lane[0] = _mm256_unpacklo_epi64(tmp_lane[0], tmp_lane[1]);
-        crypted_lane[1] = _mm256_unpackhi_epi64(tmp_lane[0], tmp_lane[1]);
+        crypted_lane[0] = _mm256_set_epi64x(*((uint64_t *)(cur_plain + (WORDS * 6))), *((uint64_t *)(cur_plain + (WORDS * 2))), *((uint64_t *)(cur_plain + (WORDS * 4))), *((uint64_t *)(cur_plain + (WORDS * 0))));
+        crypted_lane[1] = _mm256_set_epi64x(*((uint64_t *)(cur_plain + (WORDS * 7))), *((uint64_t *)(cur_plain + (WORDS * 3))), *((uint64_t *)(cur_plain + (WORDS * 5))), *((uint64_t *)(cur_plain + (WORDS * 1))));
 
         speck_encrypt_x4_inline(ctx, crypted_lane);
 
@@ -153,17 +149,14 @@ int speck_decrypt_ex(speck_ctx_t *ctx, const uint8_t *crypted, uint8_t *decrypte
     uint64_t tmp_low[LANE_NUM];
     uint64_t tmp_high[LANE_NUM];
     for (i = 0; i < len; i++) {
-        __m256i tmp_lane[2];
         __m256i decrypted_lane[2];
 
         array_idx = (i * (BLOCK_SIZE * LANE_NUM));
 
         cur_crypted = (uint8_t *)(crypted + array_idx);
 
-        tmp_lane[0] = _mm256_load_si256((const __m256i*)(cur_crypted + WORDS * (LANE_NUM * 0)));
-        tmp_lane[1] = _mm256_load_si256((const __m256i*)(cur_crypted + WORDS * (LANE_NUM * 1)));
-        decrypted_lane[0] = _mm256_unpacklo_epi64(tmp_lane[0], tmp_lane[1]);
-        decrypted_lane[1] = _mm256_unpackhi_epi64(tmp_lane[0], tmp_lane[1]);
+        decrypted_lane[0] = _mm256_set_epi64x(*((uint64_t *)(cur_crypted + (WORDS * 6))), *((uint64_t *)(cur_crypted + (WORDS * 2))), *((uint64_t *)(cur_crypted + (WORDS * 4))), *((uint64_t *)(cur_crypted + (WORDS * 0))));
+        decrypted_lane[1] = _mm256_set_epi64x(*((uint64_t *)(cur_crypted + (WORDS * 7))), *((uint64_t *)(cur_crypted + (WORDS * 3))), *((uint64_t *)(cur_crypted + (WORDS * 5))), *((uint64_t *)(cur_crypted + (WORDS * 1))));
 
         speck_decrypt_x4_inline(ctx, decrypted_lane);
 

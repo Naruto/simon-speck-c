@@ -64,10 +64,8 @@ int speck_ctr_encrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out, int len
         array_idx = (i * (BLOCK_SIZE * LANE_NUM));
 
         cur_plain = (uint8_t *)(in + array_idx);
-        tmp_lane[0] = _mm256_load_si256((const __m256i*)(cur_plain + WORDS * (LANE_NUM * 0)));
-        tmp_lane[1] = _mm256_load_si256((const __m256i*)(cur_plain + WORDS * (LANE_NUM * 1)));
-        in_block_lane[0] = _mm256_unpacklo_epi64(tmp_lane[0], tmp_lane[1]);
-        in_block_lane[1] = _mm256_unpackhi_epi64(tmp_lane[0], tmp_lane[1]);
+        in_block_lane[0] = _mm256_set_epi64x(*((uint64_t *)(cur_plain + (WORDS * 6))), *((uint64_t *)(cur_plain + (WORDS * 2))), *((uint64_t *)(cur_plain + (WORDS * 4))), *((uint64_t *)(cur_plain + (WORDS * 0))));
+        in_block_lane[1] = _mm256_set_epi64x(*((uint64_t *)(cur_plain + (WORDS * 7))), *((uint64_t *)(cur_plain + (WORDS * 3))), *((uint64_t *)(cur_plain + (WORDS * 5))), *((uint64_t *)(cur_plain + (WORDS * 1))));
 
         tmp_lane[0] = _mm256_xor_si256(crypted_iv_block_lane[0], in_block_lane[0]);
         tmp_lane[1] = _mm256_xor_si256(crypted_iv_block_lane[1], in_block_lane[1]);
