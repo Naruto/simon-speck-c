@@ -170,5 +170,21 @@ scripts\speck\build_win.bat
 
 dll library is outputted to `libs/windows` directory.
 
+## benchmark
+
+example enable avx2 benchmark on macOS or Linux.
+
+```
+rm -rf build
+mkdir build
+pushd build
+cmake -DENABLE_TESTING=ON -DENABLE_BENCHMARK=ON -DENABLE_AVX2=ON -DCMAKE_BUILD_TYPE=Release ..
+cmake --build . --clean-first
+ctest .
+./test/speck/speck128128/speck128128benchmark
+./test/speck/speck128192/speck128192benchmark
+./test/speck/speck128256/speck128256benchmark
+```
+
 # License
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2FNaruto%2Fsimon-speck-c.svg?type=large)](https://app.fossa.io/projects/git%2Bhttps%3A%2F%2Fgithub.com%2FNaruto%2Fsimon-speck-c?ref=badge_large)
