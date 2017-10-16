@@ -53,7 +53,7 @@ int compare(const void *a, const void *b) {
     return *(uint64_t*)a - *(uint64_t*)b;
 }
 
-int main() {
+int main(int argc, char* argv[]) {
     uint64_t start, finish;
     uint64_t cpu_frequency;
     uint64_t result;
@@ -68,72 +68,81 @@ int main() {
     uint8_t *decrypted_text_stream = NULL;
     uint8_t *iv_text_stream = NULL;
     uint8_t *origin_iv_text_stream = NULL;
+    int test_byte_length = TEST_BYTE_LENGTH;
+    int test_count = TEST_COUNT;
+
+    if(argc >= 2) {
+        test_byte_length = atoi(argv[1]);
+    }
+    if(argc >= 3) {
+        test_count = atoi(argv[2]);
+    }
 
     key_text_stream = (uint8_t*)malloc(KEY_LENGTH);
-    plain_text_stream = (uint8_t*)malloc(TEST_BYTE_LENGTH);
-    crypted_text_stream = (uint8_t*)malloc(TEST_BYTE_LENGTH);
-    decrypted_text_stream = (uint8_t*)malloc(TEST_BYTE_LENGTH);
+    plain_text_stream = (uint8_t*)malloc(test_byte_length);
+    crypted_text_stream = (uint8_t*)malloc(test_byte_length);
+    decrypted_text_stream = (uint8_t*)malloc(test_byte_length);
     iv_text_stream = (uint8_t*)malloc(BLOCK_SIZE);
     origin_iv_text_stream = (uint8_t*)malloc(BLOCK_SIZE);
 
     generate_random_array(key_text_stream, KEY_LENGTH);
-    generate_random_array(plain_text_stream, TEST_BYTE_LENGTH);
+    generate_random_array(plain_text_stream, test_byte_length);
     generate_random_array(origin_iv_text_stream, BLOCK_SIZE);
 
-    if(TEST_BYTE_LENGTH % BLOCK_SIZE == 0) {
-        for (int i = 0; i < TEST_COUNT; i++){
+    if(test_byte_length % BLOCK_SIZE == 0) {
+        for (int i = 0; i < test_count; i++){
 
             start = rdtsc();
             ctx = speck_init(SPECK_ENCRYPT_TYPE_128_128, key_text_stream, KEY_LENGTH);
-            speck_ecb_encrypt(ctx, plain_text_stream, crypted_text_stream, TEST_BYTE_LENGTH);
+            speck_ecb_encrypt(ctx, plain_text_stream, crypted_text_stream, test_byte_length);
             finish = rdtsc();
             speck_finish(&ctx);
             samples[i] = finish - start;
         }
-        qsort(samples, TEST_COUNT, sizeof(uint64_t), compare);
+        qsort(samples, test_count, sizeof(uint64_t), compare);
 
-        printf("ecb 128/128\n");
-        printf("data length:%6d trycount:%8d\n", TEST_BYTE_LENGTH, TEST_COUNT);
-        result = samples[(TEST_COUNT/4)*3];
-        cycles_per_byte = 1 / ((float)(TEST_BYTE_LENGTH) / result);
+        printf("speck ecb 128/128\n");
+        printf("data length:%6d trycount:%8d\n", test_byte_length, test_count);
+        result = samples[(test_count/4)*3];
+        cycles_per_byte = 1 / ((float)(test_byte_length) / result);
         printf("quartie:%10f\n", cycles_per_byte);
 
-        result = samples[TEST_COUNT/2];
-        cycles_per_byte = 1 / ((float)(TEST_BYTE_LENGTH) / result);
+        result = samples[test_count/2];
+        cycles_per_byte = 1 / ((float)(test_byte_length) / result);
         printf("median: %10f\n", cycles_per_byte);
 
-        result = samples[TEST_COUNT/4];
-        cycles_per_byte = 1 / ((float)(TEST_BYTE_LENGTH) / result);
+        result = samples[test_count/4];
+        cycles_per_byte = 1 / ((float)(test_byte_length) / result);
         printf("quartie:%10f\n", cycles_per_byte);
 
         printf("\n");
     }
 
-    for (int i = 0; i < TEST_COUNT; i++){
+    for (int i = 0; i < test_count; i++){
 
       memcpy(iv_text_stream, origin_iv_text_stream, BLOCK_SIZE);
 
       start = rdtsc();
       ctx = speck_init(SPECK_ENCRYPT_TYPE_128_128, key_text_stream, KEY_LENGTH);
-      speck_ctr_encrypt(ctx, plain_text_stream, crypted_text_stream, TEST_BYTE_LENGTH, iv_text_stream, BLOCK_SIZE);
+      speck_ctr_encrypt(ctx, plain_text_stream, crypted_text_stream, test_byte_length, iv_text_stream, BLOCK_SIZE);
       finish = rdtsc();
       speck_finish(&ctx);
       samples[i] = finish - start;
     }
-    qsort(samples, TEST_COUNT, sizeof(uint64_t), compare);
+    qsort(samples, test_count, sizeof(uint64_t), compare);
 
-    printf("ctr 128/128\n");
-    printf("data length:%6d trycount:%8d\n", TEST_BYTE_LENGTH, TEST_COUNT);
-    result = samples[(TEST_COUNT/4)*3];
-    cycles_per_byte = 1 / ((float)(TEST_BYTE_LENGTH) / result);
+    printf("speck ctr 128/128\n");
+    printf("data length:%6d trycount:%8d\n", test_byte_length, test_count);
+    result = samples[(test_count/4)*3];
+    cycles_per_byte = 1 / ((float)(test_byte_length) / result);
     printf("quartie:%10f\n", cycles_per_byte);
 
-    result = samples[TEST_COUNT/2];
-    cycles_per_byte = 1 / ((float)(TEST_BYTE_LENGTH) / result);
+    result = samples[test_count/2];
+    cycles_per_byte = 1 / ((float)(test_byte_length) / result);
     printf("median: %10f\n", cycles_per_byte);
 
-    result = samples[TEST_COUNT/4];
-    cycles_per_byte = 1 / ((float)(TEST_BYTE_LENGTH) / result);
+    result = samples[test_count/4];
+    cycles_per_byte = 1 / ((float)(test_byte_length) / result);
     printf("quartie:%10f\n", cycles_per_byte);
 
     printf("\n");
