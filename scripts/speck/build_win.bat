@@ -4,7 +4,6 @@ setlocal
 set SCRIPTDIR=%~dp0
 set PROJDIR=%SCRIPTDIR%..\..\
 set LIBSDIR=%PROJDIR%libs\
-set MSBUILDBIN="C:\Program Files (x86)\MSBuild\14.0\Bin\msbuild.exe"
 set ORIGPATH=%PATH%
 
 cd %PROJDIR%
@@ -20,9 +19,12 @@ set OUTPUTDIR=%LIBSDIR%windows\win32\
 rmdir /S/Q %BUILDDIR%
 mkdir %BUILDDIR%
 cd %BUILDDIR%
-cmake %PROJDIR% -G"Visual Studio 14 2015" -DBUILD_SHARED_LIBS=ON -DCMAKE_CONFIGURATION_TYPES=Release
-%MSBUILDBIN% ALL_BUILD.vcxproj /property:Configuration=Release
+cmake -G"Visual Studio 15 2017" -DENABLE_TESTING=ON -DBUILD_SHARED_LIBS=ON -DCMAKE_CONFIGURATION_TYPES=Release .. || exit /b 1
+cmake --build . --target ALL_BUILD -- /p:Configuration=Release || exit /b 1
+set PREVPATH=%PATH%
 set PATH=%PROJDIR%build_win32/Release;%PATH%
+ctest -C Release . || exit /b 1
+set PATH=%PREVPATH%
 mkdir %OUTPUTDIR%
 copy %BUILDDIR%Release\speck.dll %OUTPUTDIR%
 cd ..
@@ -32,9 +34,12 @@ set OUTPUTDIR=%LIBSDIR%windows\win64\
 rmdir /S/Q %BUILDDIR%
 mkdir %BUILDDIR%
 cd %BUILDDIR%
-cmake %PROJDIR% -G"Visual Studio 14 2015 Win64" -DENABLE_AVX2=ON -DBUILD_SHARED_LIBS=ON -DCMAKE_CONFIGURATION_TYPES=Release
-%MSBUILDBIN% ALL_BUILD.vcxproj /property:Configuration=Release
+cmake -G"Visual Studio 15 2017 Win64" -DENABLE_TESTING=ON -DENABLE_AVX2=ON -DBUILD_SHARED_LIBS=ON -DCMAKE_CONFIGURATION_TYPES=Release .. || exit /b 1
+cmake --build . --target ALL_BUILD -- /p:Configuration=Release || exit /b 1
+set PREVPATH=%PATH%
 set PATH=%PROJDIR%build_win64\Release;%PATH%
+ctest -C Release . || exit /b 1
+set PATH=%PREVPATH%
 mkdir %OUTPUTDIR%
 copy %BUILDDIR%Release\speck.dll %OUTPUTDIR%
 cd ..
