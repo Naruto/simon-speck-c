@@ -42,11 +42,21 @@ int speck_ctr_encrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out, int len
     uint64_t crypted_iv_block[2];
     uint64_t plain_block[2];
     uint64_t iv_block[2];
+#ifdef LITTLE_ENDIAN_CTR
+    uint64_t iv_tmp[2];
+    iv_tmp[0] = ((uint64_t*)iv)[0];
+    iv_tmp[1] = ((uint64_t*)iv)[1];
+#endif
     for (i = 0; i < count; i++) {
+#ifdef LITTLE_ENDIAN_CTR
+        iv_block[0] = iv_tmp[0];
+        iv_block[1] = iv_tmp[1];
+        iv_tmp[0]++;
+#else
         cast_uint8_array_to_uint64(&iv_block[0], iv + (WORDS * 0));
         cast_uint8_array_to_uint64(&iv_block[1], iv + (WORDS * 1));
         ctr128_inc(iv);
-
+#endif
         speck_encrypt(ctx, iv_block, crypted_iv_block);
 
         int array_idx = (i * (BLOCK_SIZE * LANE_NUM));
@@ -60,9 +70,15 @@ int speck_ctr_encrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out, int len
         cast_uint64_to_uint8_array(cur_crypted + (WORDS * 1), crypted_iv_block[1] ^ plain_block[1]);
     }
     if (remain_bytes != 0) {
+#ifdef LITTLE_ENDIAN_CTR
+        iv_block[0] = iv_tmp[0];
+        iv_block[1] = iv_tmp[1];
+        iv_tmp[0]++;
+#else
         cast_uint8_array_to_uint64(&iv_block[0], iv + (WORDS * 0));
         cast_uint8_array_to_uint64(&iv_block[1], iv + (WORDS * 1));
         ctr128_inc(iv);
+#endif
 
         speck_encrypt(ctx, iv_block, crypted_iv_block);
 
@@ -83,6 +99,11 @@ int speck_ctr_encrypt(speck_ctx_t *ctx, const uint8_t *in, uint8_t *out, int len
             cast_uint64_to_uint8_array_len(cur_crypted + (WORDS * 0), crypted_iv_block[0] ^ plain_block[0], remain_bytes);
         }
     }
+
+#ifdef LITTLE_ENDIAN_CTR
+    cast_uint64_to_uint8_array(iv + (WORDS * 0), iv_tmp[0]);
+    cast_uint64_to_uint8_array(iv + (WORDS * 1), iv_tmp[1]);
+#endif
 
     return 0;
 }

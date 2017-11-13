@@ -17,6 +17,7 @@ option(ENABLE_STATIC "Build a static version of the libraries?" OFF)
 option(DISABLE_SHARED "Do not build a shared version of the libraries?" OFF)
 option(ENABLE_TESTING "Enable ctest?" OFF)
 option(ENABLE_BENCHMARK "Enable benchmark?" OFF)
+option(LITTLE_ENDIAN_CTR "little-endian ctr mode" OFF)
 
 
 # simon speck build options
@@ -133,6 +134,11 @@ if(ENABLE_AVX2)
     endif()
 endif()
 
+# flags
+if(LITTLE_ENDIAN_CTR)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DLITTLE_ENDIAN_CTR")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DLITTLE_ENDIAN_CTR")
+endif()
 
 # source
 set(libspeck_SRCS ${libspeck_SRCS} src/speck/speck_common.c)
