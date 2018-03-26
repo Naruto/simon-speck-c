@@ -17,6 +17,7 @@ option(ENABLE_STATIC "Build a static version of the libraries?" OFF)
 option(DISABLE_SHARED "Do not build a shared version of the libraries?" OFF)
 option(ENABLE_TESTING "Enable ctest?" OFF)
 option(ENABLE_BENCHMARK "Enable benchmark?" OFF)
+option(ENABLE_CCACHE "Enable ccache?" ON)
 
 
 # simon speck build options
@@ -70,6 +71,27 @@ if(MINGW)
     if(EXISTS /mingw64)
         list(APPEND CMAKE_INCLUDE_PATH /mingw64)
     endif()
+endif()
+
+
+# ----------------------------------------------------------------------------
+# ccache
+# ----------------------------------------------------------------------------
+find_program(CCACHE_EXE ccache)
+if(CCACHE_EXE)
+  if(ENABLE_CCACHE)
+    message(STATUS "Enable ccache")
+    if(CMAKE_C_COMPILER_LAUNCHER)
+      set(CMAKE_C_COMPILER_LAUNCHER "${CMAKE_C_COMPILER_LAUNCHER}" "${CCACHE_EXE}")
+    else()
+      set(CMAKE_C_COMPILER_LAUNCHER "${CCACHE_EXE}")
+    endif()
+    if(CMAKE_CXX_COMPILER_LAUNCHER)
+      set(CMAKE_CXX_COMPILER_LAUNCHER "${CMAKE_CXX_COMPILER_LAUNCHER}" "${CCACHE_EXE}")
+    else()
+      set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_EXE}")
+    endif()
+  endif()
 endif()
 
 
