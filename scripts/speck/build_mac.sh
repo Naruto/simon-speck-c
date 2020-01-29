@@ -25,13 +25,12 @@ buildmac() {
 
 pushd ${BASEDIR} > /dev/null
 
-buildmac build/build_i386 "-DCMAKE_OSX_ARCHITECTURES=i386"
 buildmac build/build_x86_64 "-DCMAKE_OSX_ARCHITECTURES=x86_64 -DENABLE_AVX2=ON"
 
 /bin/rm -rf build/build_macos_fat
 /bin/mkdir build/build_macos_fat
 pushd build/build_macos_fat > /dev/null
-lipo -create ../build_x86_64/${LIBNAME} ../build_i386/${LIBNAME} -o ./${LIBNAME}
+lipo -create ../build_x86_64/${LIBNAME} -o ./${LIBNAME}
 popd > /dev/null
 
 # create bundle file
