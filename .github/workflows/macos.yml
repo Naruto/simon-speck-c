@@ -1,0 +1,18 @@
+name: macOS build
+
+on: [push]
+
+jobs:
+  macos_build:
+    strategy:
+      matrix:
+        platform: [macos-latest]
+    runs-on: ${{ matrix.platform }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: build for macOS
+      run: ./scripts/speck/build_mac.sh
+    - name: build for iOS
+      run: ./scripts/speck/build_ios.sh
+
+
