@@ -7,8 +7,6 @@ env:
 
 matrix:
   include:
-    - os: osx
-      osx_image: xcode11.3
     - os: linux
       before_install:
         - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
@@ -66,10 +64,5 @@ script:
       ./scripts/speck/build_linux_aarch64.sh
       # ./scripts/speck/build_linux_mips.sh
       ./scripts/speck/build_linux_powerpc.sh
-    fi
-  - |
-    if [[ "${COVERITY_SCAN_BRANCH}" != 1 ]] && [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      ./scripts/speck/build_mac.sh
-      ./scripts/speck/build_ios.sh
     fi
 
